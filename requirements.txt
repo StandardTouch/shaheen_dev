@@ -3,3 +3,4 @@ ffmpeg
 Pillow
 fpdf
 pdf2image
+poppler-utils
