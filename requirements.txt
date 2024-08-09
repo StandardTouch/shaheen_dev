@@ -1,0 +1,4 @@
+werkzeug
+ffmpeg
+Pillow
+fpdf

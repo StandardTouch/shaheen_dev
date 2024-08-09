@@ -18,3 +18,18 @@ build-backend = "flit_core.buildapi"
 # These dependencies are only installed when developer mode is enabled
 [tool.bench.dev-dependencies]
 # package_name = "~=1.1.0"
+
+[deploy.dependencies.apt]
+packages = [
+    "ffmpeg",   # For video/audio processing
+    "libjpeg-dev",  # Dependency for Pillow to handle JPEG images
+    "zlib1g-dev",   # Dependency for Pillow to handle PNG images
+    "libfreetype6-dev",  # Dependency for Pillow to handle fonts (TTF)
+    "liblcms2-dev",  # Dependency for Pillow to handle color management
+    "libopenjp2-7-dev",  # Dependency for Pillow to handle JPEG 2000 images
+    "libtiff5-dev",  # Dependency for Pillow to handle TIFF images
+    "libwebp-dev" ,   # Dependency for Pillow to handle WebP images
+    "Pillow",
+    "fpdf",
+
+]

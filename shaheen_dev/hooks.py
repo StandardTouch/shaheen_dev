@@ -10,8 +10,8 @@ app_license = "mit"
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/shaheen_dev/css/shaheen_dev.css"
-# app_include_js = "/assets/shaheen_dev/js/shaheen_dev.js"
+app_include_css = "/assets/built_in_video_recorder/css/video_recorder.css"
+app_include_js = "/assets/built_in_video_recorder/js/video_recorder.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/shaheen_dev/css/shaheen_dev.css"
@@ -28,8 +28,8 @@ app_license = "mit"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-# doctype_js = {"doctype" : "public/js/doctype.js"}
-# doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
+doctype_js = {"Student Complete Progress" : "public/js/generate_certificate.js" ,}
+doctype_list_js = {"File" :"public/js/download_certificate.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 
@@ -227,3 +227,6 @@ app_license = "mit"
 #	"Logging DocType Name": 30  # days to retain logs
 # }
 
+override_whitelisted_methods = {
+    "shaheen_dev.compress_video": "shaheen_dev.api.video_compressor.compress_video"
+}
