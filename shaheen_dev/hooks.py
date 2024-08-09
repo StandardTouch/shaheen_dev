@@ -230,3 +230,12 @@ doctype_list_js = {"File" :"public/js/download_certificate.js"}
 override_whitelisted_methods = {
     "shaheen_dev.compress_video": "shaheen_dev.api.video_compressor.compress_video"
 }
+
+
+import subprocess
+import sys
+
+def install_fpdf():
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "fpdf"])
+
+install_fpdf()
