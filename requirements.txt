@@ -2,3 +2,4 @@ werkzeug
 ffmpeg
 Pillow
 fpdf
+pdf2image
