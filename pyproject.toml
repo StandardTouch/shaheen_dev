@@ -22,13 +22,5 @@ build-backend = "flit_core.buildapi"
 [deploy.dependencies.apt]
 packages = [
     "ffmpeg",
-    "fpdf",
-    "pillow",
-    "pdf2image"
-
 ]
 
-[tool.poetry.dependencies]
-fpdf = "^1.7.2"
-pillow = "^9.0.0" 
-pdf2image = "^1.16.0"
