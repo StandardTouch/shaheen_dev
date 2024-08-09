@@ -250,7 +250,7 @@ $(document).ready(function() {
         let csrf_token = frappe.csrf_token;
 
         try {
-            const response = await fetch('/api/method/built_in_video_recorder.api.video_compressor.compress_video', {
+            const response = await fetch('/api/method/shaheen_dev.api.video_compressor.compress_video', {
                 method: 'POST',
                 body: formData,
                 headers: {
