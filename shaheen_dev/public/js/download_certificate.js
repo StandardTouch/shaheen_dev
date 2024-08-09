@@ -1,6 +1,6 @@
 frappe.listview_settings['File'] = {
     refresh: function(listview) {
-        listview.page.add_action_item(__('Generate PDF from Folder Images'), function() {
+        listview.page.add_actions_menu_item( ('Generate PDF from Folder Images'), function() {
             let selected_docs = listview.get_checked_items();
 
             if (selected_docs.length !== 1 || !selected_docs[0].is_folder) {

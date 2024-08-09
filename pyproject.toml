@@ -21,15 +21,10 @@ build-backend = "flit_core.buildapi"
 
 [deploy.dependencies.apt]
 packages = [
-    "ffmpeg",   # For video/audio processing
-    "libjpeg-dev",  # Dependency for Pillow to handle JPEG images
-    "zlib1g-dev",   # Dependency for Pillow to handle PNG images
-    "libfreetype6-dev",  # Dependency for Pillow to handle fonts (TTF)
-    "liblcms2-dev",  # Dependency for Pillow to handle color management
-    "libopenjp2-7-dev",  # Dependency for Pillow to handle JPEG 2000 images
-    "libtiff5-dev",  # Dependency for Pillow to handle TIFF images
-    "libwebp-dev" ,   # Dependency for Pillow to handle WebP images
-    "Pillow",
-    "fpdf",
-
+    "ffmpeg",
 ]
+
+[tool.poetry.dependencies]
+fpdf = "^1.7.2"
+pillow = "^9.0.0" 
+pdf2image = "^1.16.0"
