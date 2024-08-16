@@ -242,3 +242,10 @@ def install_fpdf():
     
   
 install_fpdf()
+
+
+scheduler_events = {
+    "daily": [
+        "shaheen_dev.api.auto_delete.delete_old_files"
+    ]
+}
