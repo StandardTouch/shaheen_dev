@@ -1,41 +1,51 @@
-import frappe
 import os
+import frappe
 import subprocess
 from werkzeug.utils import secure_filename
-from werkzeug.wrappers import Response
 
 @frappe.whitelist(allow_guest=True)
-def compress_video():
+def upload_and_convert_video():
     try:
-        if 'file' not in frappe.request.files:
-            return {'error': "No file part"}, 400
+        # Access the file from the request
+        file = frappe.request.files.get('filedata')
+        if not file:
+            frappe.throw(("No file uploaded"))
 
-        file = frappe.request.files['file']
-
-        if file.filename == '':
-            return {'error': "No selected file"}, 400
-
+        # Secure the filename and save the WebM file temporarily
         filename = secure_filename(file.filename)
-        input_path = os.path.join('/tmp', filename)
-        output_path = os.path.join('/tmp', 'output.mp4')
+        webm_path = os.path.join(frappe.get_site_path('private', 'files'), filename)
 
-        file.save(input_path)
+        with open(webm_path, 'wb') as f:
+            f.write(file.read())
 
-        command = ['ffmpeg', '-y', '-i', input_path, '-c:v', 'libx264', '-crf', '28', '-preset', 'fast', output_path]
+        # Generate the MP4 filename and path
+        mp4_filename = os.path.splitext(filename)[0] + '.mp4'
+        mp4_path = os.path.join(frappe.get_site_path('private', 'files'), mp4_filename)
 
-        process = subprocess.run(command, capture_output=True, text=True)
+        try:
+            # Run FFmpeg to convert WebM to MP4
+            subprocess.run(['ffmpeg', '-i', webm_path, mp4_path], check=True)
 
-        if process.returncode != 0:
-            raise Exception(f"ffmpeg error: {process.stderr}")
+            # Read the MP4 file
+            with open(mp4_path, 'rb') as f:
+                mp4_data = f.read()
 
-        # Serve the compressed file with correct MIME type
-        with open(output_path, 'rb') as f:
-            data = f.read()
+            # Clean up temporary files
+            os.remove(webm_path)
+            os.remove(mp4_path)
 
-        response = Response(data, mimetype='video/mp4')
-        response.headers['Content-Disposition'] = 'attachment; filename=output.mp4'
-        return response
+            # Return the MP4 file as a response
+            frappe.local.response.filecontent = mp4_data
+            frappe.local.response.type = "binary"
+            frappe.local.response.filename = mp4_filename
+            frappe.local.response.content_type = "video/mp4"
+
+            return
+
+        except subprocess.CalledProcessError as e:
+            frappe.logger().error(f'FFmpeg error: {e}')
+            frappe.throw(('Video conversion failed'))
 
     except Exception as e:
-        frappe.log_error(message=str(e), title="Video Compression Error")
-        return {'error': str(e)}, 500
+        frappe.logger().error(f'Error in video upload and conversion: {e}')
+        frappe.throw(('An error occurred during the video upload and conversion process'))
