@@ -17,7 +17,7 @@ function initializeVueApp() {
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Record Video</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="closeModal">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -34,13 +34,18 @@ function initializeVueApp() {
                             <div class="recording-time">{{ recordingTime }}</div>
                             <div class="video-duration" v-if="videoDuration">Duration: {{ videoDuration }}</div>
                             <div class="camera-mode-label">{{ cameraModeLabel }}</div>
-                            <!-- This div is always present, but hidden unless loading is true -->
-                            <div ref="loadingScreen" class="loading-screen" v-if="loading">Processing, please wait...</div>
+                            <!-- Loading Screen -->
+                            <div v-if="loading" class="loading-overlay">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                                <p>Processing, please wait...</p>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button class="btn btn-success" @click="attachVideo" :disabled="!videoUrl">Attach Video</button>
+                        <button type="button" class="btn btn-secondary" @click="closeModal">Close</button>
+                        <button class="btn btn-success" @click="attachVideo" :disabled="!videoUrl || loading">Attach Video</button>
                     </div>
                 </div>
             </div>
@@ -61,7 +66,7 @@ function initializeVueApp() {
                 recordingTimeInterval: null,
                 showRecordAgain: false,
                 loading: false,
-                currentFieldName: null, // The current field name to attach the video
+                currentFieldName: null,
             };
         },
         methods: {
@@ -85,20 +90,27 @@ function initializeVueApp() {
                 try {
                     this.recordedBlobs = [];
                     this.mediaRecorder = new MediaRecorder(this.stream, {
-                        mimeType: 'video/webm',
-                        videoBitsPerSecond: 0.25 * 1000 * 1000
+                        mimeType: 'video/webm;codecs=vp8,opus',
+                        videoBitsPerSecond: 250000,  // Set video bitrate to 0.25 Mbps (250 kbps)
+                        audioBitsPerSecond: 64000    // Optional: Set audio bitrate (e.g., 64 kbps)
                     });
                     this.mediaRecorder.ondataavailable = (event) => {
                         if (event.data && event.data.size > 0) {
                             this.recordedBlobs.push(event.data);
                         }
                     };
-                    this.mediaRecorder.start();
+                    this.mediaRecorder.start(100); // Collect data in 100ms chunks
                     this.startTime = Date.now();
                     this.recordingTime = "00:00";
                     this.recordingTimeInterval = setInterval(this.updateRecordingTime, 1000);
                     this.isRecording = true;
                     this.showRecordAgain = false;
+
+                    // Close other modals and remove backdrops
+                    // $('.modal-backdrop').remove();
+                    // if (window.parent) {
+                    //     window.parent.$('.modal').modal('hide');
+                    // }
                 } catch (error) {
                     console.error("Error starting recording:", error);
                     alert('Could not start recording. Please try again.');
@@ -112,84 +124,168 @@ function initializeVueApp() {
 
                     this.mediaRecorder.onstop = () => {
                         const videoBlob = new Blob(this.recordedBlobs, { type: 'video/webm' });
-                        this.videoUrl = URL.createObjectURL(videoBlob);
 
-                        this.$refs.videoPreview.srcObject = null;
-                        this.$refs.videoPreview.src = this.videoUrl;
-                        this.$refs.videoPreview.controls = true;
-                        this.$refs.videoPreview.play();
-
-                        const videoElement = document.createElement('video');
-                        videoElement.src = this.videoUrl;
-                        videoElement.addEventListener('loadedmetadata', () => {
-                            const duration = videoElement.duration;
-                            const minutes = String(Math.floor(duration / 60)).padStart(2, '0');
-                            const seconds = String(Math.floor(duration % 60)).padStart(2, '0');
-                            this.videoDuration = `Duration: ${minutes}:${seconds}`;
-                        });
-
-                        this.loading = false;
-                        this.showRecordAgain = true;
-                        this.isRecording = false;
+                        // Convert WebM to MP4 without compressing
+                        this.convertWebMToMP4(videoBlob);
                     };
                 } catch (error) {
                     console.error("Error stopping recording:", error);
                     alert('Could not stop recording. Please try again.');
                 }
             },
+            async convertWebMToMP4(webMBlob) {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 120000); // Timeout set to 120 seconds
+            
+                try {
+                    const formData = new FormData();
+                    formData.append('file', webMBlob, 'video.webm');
+            
+                    const response = await fetch('/api/method/shaheen_dev.api.video_converter.convert_to_mp4', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Frappe-CSRF-Token': frappe.csrf_token,
+                            'Accept': 'application/json',
+                        },
+                        credentials: 'include',
+                        signal: controller.signal,
+                    });
+            
+                    clearTimeout(timeoutId); // Clear the timeout if the request succeeds
+            
+                    if (!response.ok) {
+                        const errorText = await response.text(); // Read the error text for debugging
+                        throw new Error(errorText);
+                    }
+            
+                    const data = await response.json();
+                    console.log(data)
+                    if (data.message && data.message.file_url) {
+                        this.videoUrl = data.message.file_url; 
+                        console.log("Video converted and uploaded successfully:", this.videoUrl);
+            
+                        // Set the video source to the URL received from the server
+                        this.$refs.videoPreview.srcObject = null;
+                        this.$refs.videoPreview.src = this.videoUrl; // Set the source to the file URL
+                        this.$refs.videoPreview.controls = true;
+                        this.$refs.videoPreview.play();
+            
+                        // Fetch video metadata to get duration (optional)
+                        const videoElement = document.createElement('video');
+                        videoElement.src = this.videoUrl;
+                        videoElement.addEventListener('loadedmetadata', () => {
+                            const duration = videoElement.duration;
+                            const minutes = String(Math.floor(duration / 60)).padStart(2, '0');
+                            const seconds = String(Math.floor(duration % 60)).padStart(2, '0');
+                            this.videoDuration = `${minutes}:${seconds}`;
+                        });
+            
+                        this.loading = false;
+                        this.showRecordAgain = true;
+                        this.isRecording = false;
+                    } else {
+                        console.error("Error: No file URL returned from the server.");
+                    }
+                } catch (error) {
+                    if (error.name === 'AbortError') {
+                        console.error('Request timed out:', error);
+                        alert('The request took too long and was aborted. Please try again.');
+                    } else {
+                        console.error("Error converting video:", error);
+                        alert('Could not convert video. Please try again.');
+                    }
+                    this.loading = false;
+                }
+            },
+            async  uploadToServer(file_url) {
+                console.log(file_url)
+                try {
+                    const randomNumber = Math.floor(Math.random() * 1000000);
+                    const fileName = `recorded-video-${randomNumber}.mp4`; // You can dynamically generate a name if needed
+                    const formData = new FormData();
+                    formData.append('file_url', file_url);
+                    formData.append('file_name', fileName);
+            
+                    const response = await fetch('/api/method/upload_file', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Frappe-CSRF-Token': frappe.csrf_token
+                        }
+                    });
+            
+                    if (!response.ok) {
+                        throw new Error('Failed to upload video: ' + await response.text());
+                    }
+            
+                    const result = await response.json();
+                    return result.message.file_url;
+                } catch (error) {
+                    console.error("Error uploading video:", error);
+                    throw error;
+                }
+                },
+    
             async attachVideo() {
                 try {
                     // Show loading screen
                     this.loading = true;
-
-                    // Simulate delay for attachment process
-                    setTimeout(async () => {
-                        const fileURL = await this.uploadBlobToServer(new Blob(this.recordedBlobs, { type: 'video/webm' }), "recorded_video.mp4");
-
-                        const doc = cur_frm.doc;
-                        doc[this.currentFieldName] = fileURL; // Use the captured field name here
-
-                        await frappe.call({
-                            method: "frappe.desk.form.save.savedocs",
-                            args: {
-                                doc: doc,
-                                action: "Save"
-                            },
-                            callback: function(r) {
-                                if (!r.exc) {
-                                    frappe.show_alert({ message: 'Document updated with video attachment', indicator: 'green' });
-                                    cur_frm.reload_doc();
-                                }
+            
+                    // Call uploadBlobToServer to upload the video and get the file URL
+                    this.frappe_file_url = await this.uploadToServer(this.videoUrl);
+            
+                    if (!this.frappe_file_url) {
+                        throw new Error('Failed to upload the video to the server');
+                    }
+            
+                    // Attach the file URL to the specific field in the Frappe document
+                    const doc = cur_frm.doc;
+                    doc[this.currentFieldName] = this.frappe_file_url; // Use the captured field name here
+            
+                    await frappe.call({
+                        method: "frappe.desk.form.save.savedocs",
+                        args: {
+                            doc: doc,
+                            action: "Save"
+                        },
+                        callback: function(r) {
+                            if (!r.exc) {
+                                frappe.show_alert({ message: 'Document updated with video attachment', indicator: 'green' });
+                                cur_frm.reload_doc();
+                            } else {
+                                throw new Error('Failed to save the document with the video URL');
                             }
-                        });
-
-                        $('#videoRecorderModal').modal('hide');
-                        $('#videoRecorderModal').remove();
-                        this.stream.getTracks().forEach(track => track.stop());
-
-                        $('.modal-backdrop').remove();
-
-                        if (window.parent) {
-                            window.parent.$('.modal').modal('hide');
                         }
-
-                        // Hide loading screen
-                        this.loading = false;
-                    }, 3000); // Simulate a 3-second delay
+                    });
+            
+                    // Hide the modal and stop the camera stream
+                    $('#videoRecorderModal').modal('hide');
+                    this.stream.getTracks().forEach(track => track.stop());
+            
+                    // Clean up the modal backdrop and any other modals
+                    $('.modal-backdrop').remove();
+                    if (window.parent) {
+                        window.parent.$('.modal').modal('hide');
+                    }
+            
+                    // Hide loading screen
+                    this.loading = false;
                 } catch (error) {
                     console.error("Error attaching video:", error);
                     frappe.show_alert({ message: 'Video attachment failed', indicator: 'red' });
                     this.loading = false; // Ensure loading screen is hidden in case of error
                 }
-            },
+            }
+            
+,
             recordAgain() {
-                this.$refs.videoPreview.srcObject = this.stream;
-                this.$refs.videoPreview.controls = false;
-                this.$refs.videoPreview.play();
-                this.recordingTime = "00:00";
-                this.videoDuration = '';
+                this.initializeCamera(this.currentFacingMode);
                 this.videoUrl = null;
+                this.videoDuration = '';
+                this.recordingTime = '00:00';
                 this.showRecordAgain = false;
+                this.$refs.videoPreview.controls = false;
             },
             switchCamera() {
                 this.currentFacingMode = this.currentFacingMode === 'user' ? 'environment' : 'user';
@@ -201,36 +297,27 @@ function initializeVueApp() {
                 const seconds = String(elapsedTime % 60).padStart(2, '0');
                 this.recordingTime = `${minutes}:${seconds}`;
             },
-            async uploadBlobToServer(blob, filename) {
-                const formData = new FormData();
-                formData.append('file', blob, filename);
-
-                try {
-                    const response = await fetch('/api/method/upload_file', {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-Frappe-CSRF-Token': frappe.csrf_token
-                        }
-                    });
-
-                    if (!response.ok) {
-                        throw new Error('Failed to upload video: ' + await response.text());
-                    }
-
-                    const result = await response.json();
-                    return result.message.file_url;
-                } catch (error) {
-                    console.error("Error uploading video:", error);
-                    throw error;
+            closeModal() {
+                $('#videoRecorderModal').modal('hide');
+                if (this.stream) {
+                    this.stream.getTracks().forEach(track => track.stop());
                 }
+                this.resetData();
+            },
+            resetData() {
+                this.recordedBlobs = [];
+                this.isRecording = false;
+                this.videoUrl = null;
+                this.recordingTime = '00:00';
+                this.videoDuration = '';
+                this.showRecordAgain = false;
+                this.loading = false;
             }
         },
         mounted() {
             this.initializeCamera(this.currentFacingMode);
         }
     });
-
     const appDiv = document.createElement('div');
     appDiv.id = 'app';
     document.body.appendChild(appDiv);
@@ -245,8 +332,9 @@ function initializeVueApp() {
         `,
         methods: {
             openCameraModal() {
+                console.log("Opening camera modal for field:", this.$refs.videoRecorder.currentFieldName);
                 $('#videoRecorderModal').modal('show');
-            },
+            }
         },
     });
 
@@ -263,22 +351,21 @@ function initializeVueApp() {
                     if (window.parent) {
                         window.parent.$('.modal').modal('hide');
                     }
-
-                    app.$refs.videoRecorder.initializeCamera();  // Initialize the camera
-                    app.openCameraModal(); // Open the modal
+                    app.$refs.videoRecorder.currentFieldName = currentFieldName; // Set the current field name in the Vue component
+                    app.openCameraModal(); // Open the modal with the correct field name
                 });
             }
         });
     }
+   
+    
 
-    // // Set currentFieldName when .btn-attach is clicked and open the camera modal
-    // $(document).on('click', '.btn-attach', function() {
-    //     app.$refs.videoRecorder.currentFieldName = $(this).data('fieldname'); // Set the current field name
-    //     app.$refs.videoRecorder.initializeCamera(); // Initialize the camera
-    //     app.openCameraModal(); // Open the modal
-    // });
+    // Event listener for attach buttons
+    $(document).on('click', '.btn-attach', function() {
+        currentFieldName = $(this).data('fieldname'); // Store the field name globally
+    });
 
-    // Call the function to add video buttons on page load
+    // Call addVideoButton when the DOM is ready
     addVideoButton();
 
     // Monitor DOM changes to dynamically add video buttons when new file upload buttons are added
