@@ -30,7 +30,7 @@ function initializeVueApp() {
                                 <button @click="stopRecording" class="button stop" :disabled="!isRecording">⏹️ Stop Recording</button>
                                 <button @click="recordAgain" class="button record-again" v-show="showRecordAgain">🔄 Record Again</button>
                             </div>
-                            <a v-if="videoUrl" :href="videoUrl" download="recorded-video.mp4" class="download-link">⬇️ Download Video</a>
+                            <a v-if="videoUrl" :href="videoUrl" download="recorded-video.webm" class="download-link">⬇️ Download Video</a>
                             <div class="recording-time">{{ recordingTime }}</div>
                             <div class="video-duration" v-if="videoDuration">Duration: {{ videoDuration }}</div>
                             <div class="camera-mode-label">{{ cameraModeLabel }}</div>
@@ -105,12 +105,6 @@ function initializeVueApp() {
                     this.recordingTimeInterval = setInterval(this.updateRecordingTime, 1000);
                     this.isRecording = true;
                     this.showRecordAgain = false;
-
-                    // Close other modals and remove backdrops
-                    // $('.modal-backdrop').remove();
-                    // if (window.parent) {
-                    //     window.parent.$('.modal').modal('hide');
-                    // }
                 } catch (error) {
                     console.error("Error starting recording:", error);
                     alert('Could not start recording. Please try again.');
@@ -124,88 +118,24 @@ function initializeVueApp() {
 
                     this.mediaRecorder.onstop = () => {
                         const videoBlob = new Blob(this.recordedBlobs, { type: 'video/webm' });
-
-                        // Convert WebM to MP4 without compressing
-                        this.convertWebMToMP4(videoBlob);
+                        this.videoUrl = URL.createObjectURL(videoBlob);
+                        this.loading = false;
+                        this.showRecordAgain = true;
+                        this.isRecording = false;
                     };
                 } catch (error) {
                     console.error("Error stopping recording:", error);
                     alert('Could not stop recording. Please try again.');
-                }
-            },
-            async convertWebMToMP4(webMBlob) {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 120000); // Timeout set to 120 seconds
-            
-                try {
-                    const formData = new FormData();
-                    formData.append('file', webMBlob, 'video.webm');
-            
-                    const response = await fetch('/api/method/shaheen_dev.api.video_converter.convert_to_mp4', {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-Frappe-CSRF-Token': frappe.csrf_token,
-                            'Accept': 'application/json',
-                        },
-                        credentials: 'include',
-                        signal: controller.signal,
-                    });
-            
-                    clearTimeout(timeoutId); // Clear the timeout if the request succeeds
-            
-                    if (!response.ok) {
-                        const errorText = await response.text(); // Read the error text for debugging
-                        throw new Error(errorText);
-                    }
-            
-                    const data = await response.json();
-                    console.log(data)
-                    if (data.message && data.message.file_url) {
-                        this.videoUrl = data.message.file_url; 
-                        console.log("Video converted and uploaded successfully:", this.videoUrl);
-            
-                        // Set the video source to the URL received from the server
-                        this.$refs.videoPreview.srcObject = null;
-                        this.$refs.videoPreview.src = this.videoUrl; // Set the source to the file URL
-                        this.$refs.videoPreview.controls = true;
-                        this.$refs.videoPreview.play();
-            
-                        // Fetch video metadata to get duration (optional)
-                        const videoElement = document.createElement('video');
-                        videoElement.src = this.videoUrl;
-                        videoElement.addEventListener('loadedmetadata', () => {
-                            const duration = videoElement.duration;
-                            const minutes = String(Math.floor(duration / 60)).padStart(2, '0');
-                            const seconds = String(Math.floor(duration % 60)).padStart(2, '0');
-                            this.videoDuration = `${minutes}:${seconds}`;
-                        });
-            
-                        this.loading = false;
-                        this.showRecordAgain = true;
-                        this.isRecording = false;
-                    } else {
-                        console.error("Error: No file URL returned from the server.");
-                    }
-                } catch (error) {
-                    if (error.name === 'AbortError') {
-                        console.error('Request timed out:', error);
-                        alert('The request took too long and was aborted. Please try again.');
-                    } else {
-                        console.error("Error converting video:", error);
-                        alert('Could not convert video. Please try again.');
-                    }
                     this.loading = false;
                 }
             },
-            async  uploadToServer(file_url) {
-                console.log(file_url)
+            async uploadToServer(videoBlob) {
                 try {
                     const randomNumber = Math.floor(Math.random() * 1000000);
-                    const fileName = `recorded-video-${randomNumber}.mp4`; // You can dynamically generate a name if needed
+                    const fileName = `recorded-video-${randomNumber}.webm`; // Generate a name if needed
+            
                     const formData = new FormData();
-                    formData.append('file_url', file_url);
-                    formData.append('file_name', fileName);
+                    formData.append('file', videoBlob, fileName); // Attach the Blob directly
             
                     const response = await fetch('/api/method/upload_file', {
                         method: 'POST',
@@ -225,15 +155,15 @@ function initializeVueApp() {
                     console.error("Error uploading video:", error);
                     throw error;
                 }
-                },
-    
+            }
+            ,
             async attachVideo() {
                 try {
                     // Show loading screen
                     this.loading = true;
             
-                    // Call uploadBlobToServer to upload the video and get the file URL
-                    this.frappe_file_url = await this.uploadToServer(this.videoUrl);
+                    // Upload the video and get the file URL
+                    this.frappe_file_url = await this.uploadToServer(new Blob(this.recordedBlobs, { type: 'video/webm' }));
             
                     if (!this.frappe_file_url) {
                         throw new Error('Failed to upload the video to the server');
@@ -277,8 +207,7 @@ function initializeVueApp() {
                     this.loading = false; // Ensure loading screen is hidden in case of error
                 }
             }
-            
-,
+            ,
             recordAgain() {
                 this.initializeCamera(this.currentFacingMode);
                 this.videoUrl = null;

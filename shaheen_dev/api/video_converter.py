@@ -9,34 +9,35 @@ from werkzeug.wrappers import Response
 logging.basicConfig(level=logging.DEBUG)
 
 @frappe.whitelist(allow_guest=True)
-def convert_to_mp4():
+def convert_to_mp4(file_url=None):
     print("convert_to_mp4 function called")
     logging.debug("convert_to_mp4 function called")
 
     try:
-        if 'file' not in frappe.request.files:
-            print("No file part in the request")
-            logging.error("No file part in the request")
-            return {'error': "No file part"}, 400
+        if file_url:
+            print(f"Received file URL: {file_url}")
+            logging.debug(f"Received file URL: {file_url}")
 
-        file = frappe.request.files['file']
-        print(f"File received: {file.filename}")
-        logging.debug(f"File received: {file.filename}")
+            response = requests.get(file_url)
+            if response.status_code != 200:
+                print(f"Failed to download file from URL: {file_url}")
+                logging.error(f"Failed to download file from URL: {file_url}")
+                return {'error': "Failed to download file from URL"}, 400
 
-        if file.filename == '':
-            print("No selected file")
-            logging.error("No selected file")
-            return {'error': "No selected file"}, 400
+            filename = file_url.split("/")[-1]
+            input_path = os.path.join('/tmp', filename)
+            output_filename = os.path.splitext(filename)[0] + '.mp4'
+            output_path = os.path.join(frappe.get_site_path('public', 'files'), output_filename)
 
-        filename = secure_filename(file.filename)
-        input_path = os.path.join('/tmp', filename)
-        output_filename = os.path.splitext(filename)[0] + '.mp4'
-        output_path = os.path.join(frappe.get_site_path('public', 'files'), output_filename)
-
-        # Save the input WebM file temporarily
-        file.save(input_path)
-        print(f"File saved to: {input_path}")
-        logging.debug(f"File saved to: {input_path}")
+            # Save the downloaded content as a file temporarily
+            with open(input_path, 'wb') as f:
+                f.write(response.content)
+            print(f"File saved to: {input_path}")
+            logging.debug(f"File saved to: {input_path}")
+        else:
+            print("No file or file URL in the request")
+            logging.error("No file or file URL in the request")
+            return {'error': "No file or file URL provided"}, 400
 
         # Re-encode the video and audio to formats compatible with MP4
         command = ['ffmpeg', '-y', '-v', 'verbose', '-i', input_path, '-c:v', 'libx264', '-c:a', 'aac', output_path]
@@ -60,8 +61,9 @@ def convert_to_mp4():
         # Remove the temporary input file after conversion
         os.remove(input_path)
 
-        # Return the file URL to the frontend
-        file_url = f'/files/{output_filename}'
+        # Return the full URL of the converted MP4 file
+        site_url = frappe.utils.get_url()
+        file_url = f'{site_url}/files/{output_filename}'
         print(f"Conversion successful, file saved to: {file_url}")
         logging.debug(f"Conversion successful, file saved to: {file_url}")
 
