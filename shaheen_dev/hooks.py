@@ -28,7 +28,7 @@ app_include_js = "/assets/shaheen_dev/js/video_recorder.js"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-doctype_js = {"Student Complete Progress" :"public/js/generate_certificate.js","Add Demo" :"public/js/send_whatsapp_video.js"}
+doctype_js = {"Student Complete Progress" :"public/js/generate_certificate.js","Weekly Student Progress" :"public/js/send_whatsapp_video.js"}
 doctype_list_js = {"File" :"public/js/download_certificate.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}

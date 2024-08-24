@@ -16,7 +16,7 @@ import requests
 
 @frappe.whitelist()
 def send_whatsapp_with_video(docname):
-    doc = frappe.get_doc("Add Demo", docname)  # Replace with your actual Doctype name
+    doc = frappe.get_doc("Weekly Student Progress", docname)  # Replace with your actual Doctype name
     token = frappe.get_doc('Shaheen Whatsapp Settings').get('token')
     msg1 = frappe.get_doc('Shaheen Whatsapp Settings').get('message')
     video_url = frappe.get_doc('Shaheen Whatsapp Settings').get('video_url')
@@ -38,7 +38,7 @@ def send_whatsapp_with_video(docname):
         
         payload = {
             'token': token,
-            'to': doc.custom_phone,
+            'to': doc.custom_number,
             'video': mp4_url,
             'caption': msg1
         }
@@ -55,7 +55,7 @@ def send_whatsapp_with_video(docname):
 def convert_webm_to_mp4(webm_url):
     try:
         # Construct the URL for the Frappe API method
-        conversion_url = frappe.utils.get_url() + '/api/method/ultramsg_4_erpnext.api.video_converter.convert_to_mp4'
+        conversion_url = frappe.utils.get_url() + '/api/method/shaheen_dev.api.video_converter.convert_to_mp4'
         
         # Send a POST request to the API method with the WebM file URL
         conversion_response = requests.post(

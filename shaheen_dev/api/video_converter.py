@@ -2,9 +2,8 @@ import frappe
 import os
 import subprocess
 import logging
-from werkzeug.utils import secure_filename
-from werkzeug.wrappers import Response
 import requests
+from werkzeug.utils import secure_filename
 
 # Configure logging to the terminal
 logging.basicConfig(level=logging.DEBUG)
@@ -24,7 +23,7 @@ def convert_to_mp4(file_url=None):
                 print(f"Failed to download file from URL: {file_url}")
                 logging.error(f"Failed to download file from URL: {file_url}")
                 return {'error': "Failed to download file from URL"}, 400
-
+            
             filename = file_url.split("/")[-1]
             input_path = os.path.join('/tmp', filename)
             output_filename = os.path.splitext(filename)[0] + '.mp4'
@@ -67,8 +66,10 @@ def convert_to_mp4(file_url=None):
         file_url = f'{site_url}/files/{output_filename}'
         print(f"Conversion successful, file saved to: {file_url}")
         logging.debug(f"Conversion successful, file saved to: {file_url}")
+        
 
-        return {'file_url': file_url}
+        return  {'file_url': file_url}
+
 
     except Exception as e:
         print(f"Exception occurred: {str(e)}")
