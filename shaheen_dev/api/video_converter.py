@@ -4,6 +4,7 @@ import subprocess
 import logging
 from werkzeug.utils import secure_filename
 from werkzeug.wrappers import Response
+import requests
 
 # Configure logging to the terminal
 logging.basicConfig(level=logging.DEBUG)
@@ -45,7 +46,7 @@ def convert_to_mp4(file_url=None):
         logging.debug(f"Running command: {' '.join(command)}")
 
         # Execute the command with a timeout
-        process = subprocess.run(command, capture_output=True, text=True, timeout=120)
+        process = subprocess.run(command, capture_output=True, text=True, timeout=None)
 
         print(f"ffmpeg stdout: {process.stdout}")
         print(f"ffmpeg stderr: {process.stderr}")
