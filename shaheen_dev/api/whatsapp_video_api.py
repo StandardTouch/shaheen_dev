@@ -38,7 +38,7 @@ def send_whatsapp_with_video(docname):
         
         payload = {
             'token': token,
-            'to': doc.custom_number,
+            'to': doc.contact_number,
             'video': mp4_url,
             'caption': msg1
         }
