@@ -88,7 +88,7 @@ def send_video_after_conversion(mp4_url, token, msg1, recipients, video_url,docn
 
 def process_and_send_video(docname, video_file_url, token, msg1, recipients, video_url):
     # Convert WebM to MP4 with retries and logging
-    mp4_url = convert_webm_to_mp4_with_logging(video_file_url)
+    mp4_url = convert_webm_to_mp4_target_size(video_file_url)
     
     if mp4_url:
         # Enqueue sending the video after conversion
