@@ -87,9 +87,12 @@ def send_video_after_conversion(mp4_url, token, msg1, recipients, video_url,docn
                 frappe.log_error(f"Failed to send WhatsApp message after several attempts for video: {mp4_url}")
 
 def process_and_send_video(docname, video_file_url, token, msg1, recipients, video_url):
+    # Define the target size in MB (e.g., 14 MB)
+    target_size_mb = 16  # Adjust this value as needed
+
     # Convert WebM to MP4 with retries and logging
-    mp4_url = convert_webm_to_mp4_target_size(video_file_url)
-    
+    mp4_url = convert_webm_to_mp4_target_size(video_file_url, target_size_mb)
+
     if mp4_url:
         # Enqueue sending the video after conversion
         frappe.enqueue(
@@ -102,10 +105,10 @@ def process_and_send_video(docname, video_file_url, token, msg1, recipients, vid
             recipients=recipients,
             video_url=video_url,
             docname=docname,
-            
         )
     else:
         frappe.log_error(f"Failed to convert video to MP4 after several attempts: {video_file_url}")
+
 
 @frappe.whitelist()
 def send_whatsapp_with_video(docname):
