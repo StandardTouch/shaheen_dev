@@ -2,8 +2,11 @@ import subprocess
 import os
 import frappe
 import requests
+import subprocess
+import os
+import frappe
 
-def convert_webm_to_mp4_with_logging(webm_url, max_retries=3):
+def convert_webm_to_mp4_with_logging(webm_url, max_retries=3, resolution="640x360"):
     for attempt in range(max_retries):
         try:
             # Download the WebM file
@@ -13,11 +16,12 @@ def convert_webm_to_mp4_with_logging(webm_url, max_retries=3):
             # Prepare the output MP4 file path
             mp4_file_path = os.path.splitext(webm_file_path)[0] + '.mp4'
             
-            # Command to convert WebM to MP4 using FFmpeg with the overwrite flag
+            # Command to convert WebM to MP4 using FFmpeg with the overwrite flag and resolution reduction
             command = [
                 'ffmpeg',
                 '-y',  # Automatically overwrite existing files
                 '-i', webm_file_path,
+                '-vf', f'scale={resolution}',  # Reduce resolution
                 '-c:v', 'libx264',
                 '-c:a', 'aac',
                 '-strict', 'experimental',
@@ -43,6 +47,7 @@ def convert_webm_to_mp4_with_logging(webm_url, max_retries=3):
             print(f"Exception during conversion on attempt {attempt + 1}: {str(e)}")  # Log the exception
 
     return None  # Return None if all attempts fail
+
 
 def send_video_after_conversion(mp4_url, token, msg1, recipients, video_url,docname):
     
