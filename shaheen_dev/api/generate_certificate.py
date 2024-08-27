@@ -50,7 +50,16 @@ def generate_certificate(docname):
         # Save the edited image in the public directory
         new_file_name = f"{cluster_no}-{student_name}-{completion_date}.jpg"
         new_file_path = os.path.join(new_subfolder_path, new_file_name)
-        image.save(new_file_path)
+        
+        # Save the image
+        try:
+            image.save(new_file_path)
+        except Exception as e:
+            frappe.throw(f"Error saving the image file: {str(e)}")
+        
+        # Verify the file exists
+        if not os.path.exists(new_file_path):
+            frappe.throw(f"The file was not found at {new_file_path}. Please check the file saving process.")
 
         # Ensure the parent folder exists in the File Doctype
         if not frappe.db.exists("File", {"file_name": new_folder_name, "folder": "Home"}):
@@ -84,7 +93,12 @@ def generate_certificate(docname):
             "folder": subfolder.name,
             "is_private": 0  # Make it public
         })
-        new_file_doc.insert()
+
+        # Inserting the file into the File Doctype
+        try:
+            new_file_doc.insert()
+        except Exception as e:
+            frappe.throw(f"Error inserting the file into the File doctype: {str(e)}")
 
         return new_file_doc.file_url
 
