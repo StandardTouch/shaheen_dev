@@ -13,7 +13,7 @@ def generate_certificate(docname):
         masjid = student_details.masjid_name
         completion_date = student_details.graduation_date
 
-        # Fetch the certificate template based on the cluster_no
+        # Fetch the certificate template from the private directory based on the cluster_no
         template_file_url = f"/private/files/Cluster {cluster_no}.pdf"
         template_file_path = frappe.get_site_path(template_file_url.lstrip('/'))
 
@@ -29,7 +29,7 @@ def generate_certificate(docname):
         draw = ImageDraw.Draw(image)
 
         # Define font and size (You may need to provide the path to a TTF font file)
-        font_path = frappe.get_site_path("files", "Merriweather-Italic.ttf")
+        font_path = frappe.get_site_path("private", "files", "Merriweather-Italic.ttf")
         font = ImageFont.truetype(font_path, 40)
 
         # Define text position (Adjust according to your template)
@@ -38,16 +38,16 @@ def generate_certificate(docname):
         # Add the student's name and completion date to the image
         draw.text(name_position, student_name, font=font, fill="black")
 
-        # Define the new folder path in ERPNext File Doctype
+        # Define the new folder path in ERPNext File Doctype for public access
         new_folder_name = f"Cluster {cluster_no}"
         new_subfolder_name = masjid
         new_folder_path = frappe.get_site_path("files", new_folder_name)
-        new_subfolder_path = frappe.get_site_path( "files", new_folder_name, new_subfolder_name)
+        new_subfolder_path = frappe.get_site_path("files", new_folder_name, new_subfolder_name)
 
         # Ensure the folders exist
         os.makedirs(new_subfolder_path, exist_ok=True)
 
-        # Save the edited image
+        # Save the edited image in the public directory
         new_file_name = f"{cluster_no}-{student_name}-{completion_date}.jpg"
         new_file_path = os.path.join(new_subfolder_path, new_file_name)
         image.save(new_file_path)
@@ -82,7 +82,7 @@ def generate_certificate(docname):
             "file_name": new_file_name,
             "file_url": f"/files/{new_folder_name}/{new_subfolder_name}/{new_file_name}",
             "folder": subfolder.name,
-            "is_private": 0
+            "is_private": 0  # Make it public
         })
         new_file_doc.insert()
 
