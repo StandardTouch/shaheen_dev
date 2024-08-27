@@ -1,4 +1,4 @@
-frappe.ui.form.on('Add Demo', {
+frappe.ui.form.on('Weekly Student Progress', {
     refresh: function(frm) {
         frm.add_custom_button(__('Send WhatsApp Video to'), function() {
             frappe.call({

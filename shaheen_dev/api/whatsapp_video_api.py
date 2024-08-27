@@ -6,6 +6,7 @@ import subprocess
 import os
 import frappe
 
+
 import subprocess
 import os
 import frappe
@@ -17,16 +18,32 @@ def convert_webm_to_mp4_target_size(webm_url, target_size_mb, max_retries=3):
             webm_file_path = frappe.get_site_path('public', 'files', os.path.basename(webm_url))
             mp4_file_path = os.path.splitext(webm_file_path)[0] + '.mp4'
             
-            # Get video duration in seconds
-            duration_command = [
-                'ffprobe', 
-                '-v', 'error', 
-                '-show_entries', 'format=duration', 
-                '-of', 'default=noprint_wrappers=1:nokey=1', 
-                webm_file_path
-            ]
-            duration = float(subprocess.check_output(duration_command).strip())
+            # Get the size of the WebM file
+            file_size_mb = os.path.getsize(webm_file_path) / (1024 * 1024)  # Convert size to MB
             
+            # Determine the target duration based on file size
+            if file_size_mb <= 8:
+                duration = 360  # 6 minutes in seconds
+            else:
+                # Get video duration in seconds
+                duration_command = [
+                    'ffprobe', 
+                    '-v', 'error', 
+                    '-show_entries', 'format=duration', 
+                    '-of', 'default=noprint_wrappers=1:nokey=1', 
+                    webm_file_path
+                ]
+                
+                try:
+                    duration_output = subprocess.check_output(duration_command).strip()
+                    if duration_output != b'N/A' and duration_output:
+                        duration = float(duration_output)
+                    else:
+                        raise ValueError("Invalid duration")
+                except Exception as e:
+                    frappe.log_error(f"Error fetching video duration: {str(e)}")
+                    raise ValueError("Failed to get video duration")
+
             # Calculate target bitrate
             target_size_bytes = target_size_mb * 1024 * 1024
             target_bitrate = (target_size_bytes * 8) / duration
@@ -41,24 +58,34 @@ def convert_webm_to_mp4_target_size(webm_url, target_size_mb, max_retries=3):
                 '-y',  # Automatically overwrite existing files
                 '-i', webm_file_path,
                 '-c:v', 'libx264',
-                '-b:v', f'{video_bitrate}bps',
+                '-b:v', f'{video_bitrate}',
                 '-c:a', 'aac',
-                '-b:a', f'{audio_bitrate}bps',
+                '-b:a', f'{audio_bitrate}',
                 '-strict', 'experimental',
                 mp4_file_path
             ]
             
+            # Log the FFmpeg command
+            frappe.logger().info(f"Executing FFmpeg command: {' '.join(command)}")
+            
+            # Execute the FFmpeg command
             subprocess.run(command, check=True)
             
+            # Log the successful conversion
+            frappe.logger().info(f"Conversion successful, MP4 file path: {mp4_file_path}")
+            
+            # Return the MP4 file URL
             mp4_url = frappe.utils.get_url() + f'/files/{os.path.basename(mp4_file_path)}'
             return mp4_url
 
         except subprocess.CalledProcessError as e:
-            frappe.log_error(f"FFmpeg error on attempt {attempt + 1}: {str(e)}")
+            error_message = f"FFmpeg error on attempt {attempt + 1}: Command failed with exit code {e.returncode}"
+            frappe.log_error(error_message)
+            print(f"Full Command: {' '.join(command)}")  # Log the full command separately if needed
         except Exception as e:
             frappe.log_error(f"Exception during conversion on attempt {attempt + 1}: {str(e)}")
-
     return None
+
 
 
 def send_video_after_conversion(mp4_url, token, msg1, recipients, video_url,docname):

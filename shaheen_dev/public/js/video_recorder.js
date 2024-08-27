@@ -91,8 +91,8 @@ function initializeVueApp() {
                     this.recordedBlobs = [];
                     this.mediaRecorder = new MediaRecorder(this.stream, {
                         mimeType: 'video/webm;codecs=vp8,opus',
-                        videoBitsPerSecond: 250000,  // Set video bitrate to 0.25 Mbps (250 kbps)
-                        audioBitsPerSecond: 64000    // Optional: Set audio bitrate (e.g., 64 kbps)
+                        videoBitsPerSecond: 200000,  // Adjusted video bitrate to 0.5 Mbps (512 kbps)
+                        audioBitsPerSecond: 64000    // Adjusted audio bitrate to 64 kbps
                     });
                     this.mediaRecorder.ondataavailable = (event) => {
                         if (event.data && event.data.size > 0) {
@@ -109,7 +109,8 @@ function initializeVueApp() {
                     console.error("Error starting recording:", error);
                     alert('Could not start recording. Please try again.');
                 }
-            },
+            }
+            ,
             async stopRecording() {
                 try {
                     this.mediaRecorder.stop();

@@ -29,7 +29,7 @@ def generate_certificate(docname):
         draw = ImageDraw.Draw(image)
 
         # Define font and size (You may need to provide the path to a TTF font file)
-        font_path = frappe.get_site_path("private", "files", "Merriweather-Italic.ttf")
+        font_path = frappe.get_site_path("files", "Merriweather-Italic.ttf")
         font = ImageFont.truetype(font_path, 40)
 
         # Define text position (Adjust according to your template)
@@ -41,8 +41,8 @@ def generate_certificate(docname):
         # Define the new folder path in ERPNext File Doctype
         new_folder_name = f"Cluster {cluster_no}"
         new_subfolder_name = masjid
-        new_folder_path = frappe.get_site_path("private", "files", new_folder_name)
-        new_subfolder_path = frappe.get_site_path("private", "files", new_folder_name, new_subfolder_name)
+        new_folder_path = frappe.get_site_path("files", new_folder_name)
+        new_subfolder_path = frappe.get_site_path( "files", new_folder_name, new_subfolder_name)
 
         # Ensure the folders exist
         os.makedirs(new_subfolder_path, exist_ok=True)
@@ -80,9 +80,9 @@ def generate_certificate(docname):
         new_file_doc = frappe.get_doc({
             "doctype": "File",
             "file_name": new_file_name,
-            "file_url": f"/private/files/{new_folder_name}/{new_subfolder_name}/{new_file_name}",
+            "file_url": f"/files/{new_folder_name}/{new_subfolder_name}/{new_file_name}",
             "folder": subfolder.name,
-            "is_private": 1
+            "is_private": 0
         })
         new_file_doc.insert()
 
