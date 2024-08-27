@@ -9,7 +9,7 @@ def generate_certificate(docname):
         # Fetch the student details from the provided docname
         student_details = frappe.get_doc('Student Complete Progress', docname)
         student_name = student_details.student_name2
-        cluster_no = student_details.cluster_no  # Assuming a fixed cluster number for testing
+        cluster_no = student_details.cluster_no
         masjid = student_details.masjid_name
         completion_date = student_details.graduation_date
 
@@ -25,14 +25,14 @@ def generate_certificate(docname):
 
         # Convert the PDF to an image
         images = convert_from_path(template_file_path)
-        image = images[0]  # Assuming the template is a single-page PDF
+        image = images[0]
         draw = ImageDraw.Draw(image)
 
-        # Define font and size (You may need to provide the path to a TTF font file)
+        # Define font and size
         font_path = frappe.get_site_path("private", "files", "Merriweather-Italic.ttf")
         font = ImageFont.truetype(font_path, 40)
 
-        # Define text position (Adjust according to your template)
+        # Define text position
         name_position = (1000, 930)  # Example position
 
         # Add the student's name and completion date to the image
@@ -50,47 +50,26 @@ def generate_certificate(docname):
         # Save the edited image in the public directory
         new_file_name = f"{cluster_no}-{student_name}-{completion_date}.jpg"
         new_file_path = os.path.join(new_subfolder_path, new_file_name)
-        
+
         # Save the image
         try:
             image.save(new_file_path)
         except Exception as e:
             frappe.throw(f"Error saving the image file: {str(e)}")
-        
-        # Verify the file exists
+
+        # Ensure the file exists
         if not os.path.exists(new_file_path):
             frappe.throw(f"The file was not found at {new_file_path}. Please check the file saving process.")
 
-        # Ensure the parent folder exists in the File Doctype
-        if not frappe.db.exists("File", {"file_name": new_folder_name, "folder": "Home"}):
-            parent_folder = frappe.get_doc({
-                "doctype": "File",
-                "file_name": new_folder_name,
-                "folder": "Home",
-                "is_folder": 1
-            })
-            parent_folder.insert()
-        else:
-            parent_folder = frappe.get_doc("File", {"file_name": new_folder_name, "folder": "Home"})
-
-        # Ensure the subfolder exists in the File Doctype
-        if not frappe.db.exists("File", {"file_name": new_subfolder_name, "folder": parent_folder.name}):
-            subfolder = frappe.get_doc({
-                "doctype": "File",
-                "file_name": new_subfolder_name,
-                "folder": parent_folder.name,
-                "is_folder": 1
-            })
-            subfolder.insert()
-        else:
-            subfolder = frappe.get_doc("File", {"file_name": new_subfolder_name, "folder": parent_folder.name})
-
         # Create a new File document for the generated certificate
+        file_url = f"/files/{new_folder_name}/{new_subfolder_name}/{new_file_name}"
+        full_url = frappe.utils.get_url(file_url)
+
         new_file_doc = frappe.get_doc({
             "doctype": "File",
             "file_name": new_file_name,
-            "file_url": f"/files/{new_folder_name}/{new_subfolder_name}/{new_file_name}",
-            "folder": subfolder.name,
+            "file_url": file_url,
+            "folder": new_subfolder_name,
             "is_private": 0  # Make it public
         })
 
@@ -100,7 +79,7 @@ def generate_certificate(docname):
         except Exception as e:
             frappe.throw(f"Error inserting the file into the File doctype: {str(e)}")
 
-        return new_file_doc.file_url
+        return full_url
 
     except Exception as e:
         frappe.log_error(message=frappe.get_traceback(), title="Error in generate_certificate")
