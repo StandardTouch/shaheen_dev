@@ -51,6 +51,9 @@ def generate_certificate(docname):
         new_file_name = f"{cluster_no}-{student_name}-{completion_date}.jpg"
         new_file_path = os.path.join(new_subfolder_path, new_file_name)
         
+        # Debugging information
+        frappe.logger().info(f"Saving file at path: {new_file_path}")
+        
         # Save the image
         try:
             image.save(new_file_path)
