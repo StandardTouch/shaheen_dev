@@ -117,6 +117,7 @@ def process_certificate_and_send(docname):
                 student_id=student_details.student_id,
                 contact_number=contact_number,
             )
+           
             
         except Exception as e:
             frappe.throw(f"Error inserting the file into the File doctype: {str(e)}")
