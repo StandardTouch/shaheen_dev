@@ -138,9 +138,11 @@ def send_certificate(docname,student_id,contact_number):
     
     doc = frappe.get_doc("Student Complete Progress", student_id)
     
+    
+    
     site_url = frappe.utils.get_url()
     
-    site_image_url = f"{site_url}{image_url}"
+    site_image_url = f"{site_url}{doc.attached_certificate}"
 
     
     payload = {
