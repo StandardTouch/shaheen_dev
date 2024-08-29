@@ -102,7 +102,7 @@ def process_certificate_and_send(docname):
         })
         doc = frappe.get_doc("Student Complete Progress", student_details.student_id)
         doc.attached_certificate = new_file_doc.file_url
-        doc.save()
+        doc.save(ignore_permissions= True)
         frappe.db.commit()
         frappe.enqueue(send_certificate,
         queue='short',
