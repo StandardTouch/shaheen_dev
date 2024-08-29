@@ -1,0 +1,688 @@
+{
+ "actions": [],
+ "autoname": "format:{student_id}-{date_of_progress}",
+ "creation": "2024-08-28 21:34:56.733274",
+ "default_view": "List",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "ghusol_bath_section",
+  "column_break_uqzh",
+  "student_id",
+  "students_name",
+  "molvi_name",
+  "date_of_progress",
+  "amended_from",
+  "masjid_name",
+  "cluster_no",
+  "contact_number",
+  "custom_phone",
+  "attach_certificate",
+  "ghusol_bath_tab",
+  "farayez_ghusol",
+  "date_of_farayez_ghusol",
+  "v14",
+  "s15",
+  "sunath_ghusol",
+  "date_of_sunath_ghusol",
+  "v15",
+  "s16",
+  "nawaqis_ghusol",
+  "date_of_nawaqis_ghusol",
+  "v16",
+  "s17",
+  "tab_2_tab",
+  "wazu_ablution_section",
+  "farayez",
+  "date_of_farayez",
+  "v11",
+  "s12",
+  "sunath",
+  "date_of_sunath",
+  "v12",
+  "s13",
+  "nawaqis",
+  "date_of_nawaqis",
+  "v13",
+  "s14",
+  "namaz_prayer_tab",
+  "namaz_section",
+  "fraez_e_namaz",
+  "date_apdp",
+  "v1",
+  "s2",
+  "wajibath_e_namaz",
+  "date_of_wajibath",
+  "v2",
+  "s3",
+  "sana",
+  "date_of_sana",
+  "v3",
+  "s4",
+  "sureh_fatihah",
+  "date_of_sureh_fatihah",
+  "v4",
+  "s5",
+  "zammi_surah",
+  "date_of_zammi_surah",
+  "v5",
+  "s6",
+  "tasbihath_rukh_and_sajda",
+  "date_of_tasbihath",
+  "v6",
+  "s7",
+  "attahiyath",
+  "date_of_attahiyath",
+  "v7",
+  "s8",
+  "darood_e_ibrahim",
+  "date_of_darood",
+  "v8",
+  "s9",
+  "duwa_e_masora",
+  "date_of_duwa_e_masora",
+  "v9",
+  "s10",
+  "from_sana_to_salam",
+  "date_of_sana_to_salam",
+  "v10",
+  "s11",
+  "tab_3_tab",
+  "two_rakat_nafil_namaz_section",
+  "nafeel_namaz",
+  "date_of_nafil_namaz",
+  "v19",
+  "s19",
+  "tab_6_tab",
+  "namaz_e_janaza",
+  "date_of_namaz_e_janaza",
+  "video",
+  "send",
+  "on_submit_send"
+ ],
+ "fields": [
+  {
+   "fieldname": "ghusol_bath_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_uqzh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "student_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Student ID"
+  },
+  {
+   "fetch_from": "student_id.student_name",
+   "fetch_if_empty": 1,
+   "fieldname": "students_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Student Name"
+  },
+  {
+   "fieldname": "molvi_name",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Molvi Name"
+  },
+  {
+   "default": "Today",
+   "fieldname": "date_of_progress",
+   "fieldtype": "Date",
+   "label": "Date Of Progress"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Weekly Student Progress1",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fetch_from": "student_id.masjid_name",
+   "fieldname": "masjid_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Masjid Name"
+  },
+  {
+   "fetch_from": "masjid_name.cluster_no",
+   "fieldname": "cluster_no",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Cluster No"
+  },
+  {
+   "fieldname": "contact_number",
+   "fieldtype": "Data",
+   "label": "Contact Number",
+   "options": "Phone"
+  },
+  {
+   "fieldname": "custom_phone",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Custom Phone"
+  },
+  {
+   "fieldname": "ghusol_bath_tab",
+   "fieldtype": "Tab Break",
+   "label": "Ghusol (Bath)"
+  },
+  {
+   "default": "0",
+   "fieldname": "farayez_ghusol",
+   "fieldtype": "Check",
+   "label": "Farayez (Ghusol)"
+  },
+  {
+   "fieldname": "date_of_farayez_ghusol",
+   "fieldtype": "Date",
+   "label": "Date Of Farayez (Ghusol)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "v14",
+   "fieldtype": "Attach",
+   "hidden": 1,
+   "label": "Video"
+  },
+  {
+   "fieldname": "s15",
+   "fieldtype": "Button",
+   "hidden": 1,
+   "label": "Send"
+  },
+  {
+   "default": "0",
+   "fieldname": "sunath_ghusol",
+   "fieldtype": "Check",
+   "label": "Sunath (Ghusol)"
+  },
+  {
+   "fieldname": "date_of_sunath_ghusol",
+   "fieldtype": "Date",
+   "label": "Date Of Sunath (Ghusol)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "v15",
+   "fieldtype": "Attach",
+   "hidden": 1,
+   "label": "Video"
+  },
+  {
+   "fieldname": "s16",
+   "fieldtype": "Button",
+   "hidden": 1,
+   "label": "Send"
+  },
+  {
+   "default": "0",
+   "fieldname": "nawaqis_ghusol",
+   "fieldtype": "Check",
+   "label": "Nawaqis (Ghusol)"
+  },
+  {
+   "fieldname": "date_of_nawaqis_ghusol",
+   "fieldtype": "Date",
+   "label": "Date Of Nawaqis (Ghusol)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "v16",
+   "fieldtype": "Attach",
+   "hidden": 1,
+   "label": "Video"
+  },
+  {
+   "fieldname": "s17",
+   "fieldtype": "Button",
+   "hidden": 1,
+   "label": "Send"
+  },
+  {
+   "fieldname": "tab_2_tab",
+   "fieldtype": "Tab Break",
+   "label": "Wazu (Ablution)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "wazu_ablution_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "farayez",
+   "fieldtype": "Check",
+   "label": "Farayez"
+  },
+  {
+   "fieldname": "date_of_farayez",
+   "fieldtype": "Date",
+   "label": "Date of Farayez (Wazu)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "v11",
+   "fieldtype": "Attach",
+   "hidden": 1,
+   "label": "Video"
+  },
+  {
+   "fieldname": "s12",
+   "fieldtype": "Button",
+   "hidden": 1,
+   "label": "Send"
+  },
+  {
+   "default": "0",
+   "fieldname": "sunath",
+   "fieldtype": "Check",
+   "label": "Sunath"
+  },
+  {
+   "fieldname": "date_of_sunath",
+   "fieldtype": "Date",
+   "label": "Date Of Sunath (Wazu)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "v12",
+   "fieldtype": "Attach",
+   "hidden": 1,
+   "label": "Video"
+  },
+  {
+   "fieldname": "s13",
+   "fieldtype": "Button",
+   "hidden": 1,
+   "label": "Send"
+  },
+  {
+   "default": "0",
+   "fieldname": "nawaqis",
+   "fieldtype": "Check",
+   "label": "Nawaqis"
+  },
+  {
+   "fieldname": "date_of_nawaqis",
+   "fieldtype": "Date",
+   "label": "Date Of Nawaqis (Wazu)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "v13",
+   "fieldtype": "Attach",
+   "label": "Video "
+  },
+  {
+   "fieldname": "s14",
+   "fieldtype": "Button",
+   "hidden": 1,
+   "label": "Send"
+  },
+  {
+   "fieldname": "namaz_prayer_tab",
+   "fieldtype": "Tab Break",
+   "label": "Namaz (Prayer)"
+  },
+  {
+   "fieldname": "namaz_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "fraez_e_namaz",
+   "fieldtype": "Check",
+   "label": "Fraez E Namaz"
+  },
+  {
+   "fieldname": "date_apdp",
+   "fieldtype": "Date",
+   "label": "Date Of Fraez",
+   "read_only": 1
+  },
+  {
+   "fieldname": "v1",
+   "fieldtype": "Attach",
+   "hidden": 1,
+   "label": "Video"
+  },
+  {
+   "fieldname": "s2",
+   "fieldtype": "Button",
+   "hidden": 1,
+   "label": "Send"
+  },
+  {
+   "default": "0",
+   "fieldname": "wajibath_e_namaz",
+   "fieldtype": "Check",
+   "label": "Wajibath E Namaz"
+  },
+  {
+   "fieldname": "date_of_wajibath",
+   "fieldtype": "Date",
+   "label": "Date Of Wajibath",
+   "read_only": 1
+  },
+  {
+   "fieldname": "v2",
+   "fieldtype": "Attach",
+   "hidden": 1,
+   "label": "Video"
+  },
+  {
+   "fieldname": "s3",
+   "fieldtype": "Button",
+   "hidden": 1,
+   "label": "Send"
+  },
+  {
+   "default": "0",
+   "fieldname": "sana",
+   "fieldtype": "Check",
+   "label": "Sana"
+  },
+  {
+   "fieldname": "date_of_sana",
+   "fieldtype": "Date",
+   "label": "Date Of Sana",
+   "read_only": 1
+  },
+  {
+   "fieldname": "v3",
+   "fieldtype": "Attach",
+   "hidden": 1,
+   "label": "Video"
+  },
+  {
+   "fieldname": "s4",
+   "fieldtype": "Button",
+   "hidden": 1,
+   "label": "Send"
+  },
+  {
+   "default": "0",
+   "fieldname": "sureh_fatihah",
+   "fieldtype": "Check",
+   "label": "Sureh Fatihah"
+  },
+  {
+   "fieldname": "date_of_sureh_fatihah",
+   "fieldtype": "Date",
+   "label": "Date of Sureh Fatihah",
+   "read_only": 1
+  },
+  {
+   "fieldname": "v4",
+   "fieldtype": "Attach",
+   "hidden": 1,
+   "label": "Video"
+  },
+  {
+   "fieldname": "s5",
+   "fieldtype": "Button",
+   "hidden": 1,
+   "label": "Send"
+  },
+  {
+   "default": "0",
+   "fieldname": "zammi_surah",
+   "fieldtype": "Check",
+   "label": "Zammi Surah"
+  },
+  {
+   "fieldname": "date_of_zammi_surah",
+   "fieldtype": "Date",
+   "label": "Date of Zammi Surah",
+   "read_only": 1
+  },
+  {
+   "fieldname": "v5",
+   "fieldtype": "Attach",
+   "hidden": 1,
+   "label": "Video"
+  },
+  {
+   "fieldname": "s6",
+   "fieldtype": "Button",
+   "hidden": 1,
+   "label": "Send"
+  },
+  {
+   "default": "0",
+   "fieldname": "tasbihath_rukh_and_sajda",
+   "fieldtype": "Check",
+   "label": "Tasbihath Rukh And Sajda"
+  },
+  {
+   "fieldname": "date_of_tasbihath",
+   "fieldtype": "Date",
+   "label": "Date of Tasbihath Rukh And Sajda",
+   "read_only": 1
+  },
+  {
+   "fieldname": "v6",
+   "fieldtype": "Attach",
+   "hidden": 1,
+   "label": "Video"
+  },
+  {
+   "fieldname": "s7",
+   "fieldtype": "Button",
+   "hidden": 1,
+   "label": "Send"
+  },
+  {
+   "default": "0",
+   "fieldname": "attahiyath",
+   "fieldtype": "Check",
+   "label": "Attahiyath"
+  },
+  {
+   "fieldname": "date_of_attahiyath",
+   "fieldtype": "Date",
+   "label": "Date of Attahiyath",
+   "read_only": 1
+  },
+  {
+   "fieldname": "v7",
+   "fieldtype": "Attach",
+   "hidden": 1,
+   "label": "Video"
+  },
+  {
+   "fieldname": "s8",
+   "fieldtype": "Button",
+   "hidden": 1,
+   "label": "Send"
+  },
+  {
+   "default": "0",
+   "fieldname": "darood_e_ibrahim",
+   "fieldtype": "Check",
+   "label": "Darood E Ibrahim"
+  },
+  {
+   "fieldname": "date_of_darood",
+   "fieldtype": "Date",
+   "label": "Date of Darood E Ibrahim",
+   "read_only": 1
+  },
+  {
+   "fieldname": "v8",
+   "fieldtype": "Attach",
+   "hidden": 1,
+   "label": "Video"
+  },
+  {
+   "fieldname": "s9",
+   "fieldtype": "Button",
+   "hidden": 1,
+   "label": "Send"
+  },
+  {
+   "default": "0",
+   "fieldname": "duwa_e_masora",
+   "fieldtype": "Check",
+   "label": "Duwa E Masora"
+  },
+  {
+   "fieldname": "date_of_duwa_e_masora",
+   "fieldtype": "Date",
+   "label": "Date of Duwa E Masora",
+   "read_only": 1
+  },
+  {
+   "fieldname": "v9",
+   "fieldtype": "Attach",
+   "hidden": 1,
+   "label": "Video"
+  },
+  {
+   "fieldname": "s10",
+   "fieldtype": "Button",
+   "hidden": 1,
+   "label": "Send"
+  },
+  {
+   "default": "0",
+   "fieldname": "from_sana_to_salam",
+   "fieldtype": "Check",
+   "label": "From Sana To Salam"
+  },
+  {
+   "fieldname": "date_of_sana_to_salam",
+   "fieldtype": "Date",
+   "label": "Date Of Sana To Salam",
+   "read_only": 1
+  },
+  {
+   "fieldname": "v10",
+   "fieldtype": "Attach",
+   "label": "Video"
+  },
+  {
+   "fieldname": "s11",
+   "fieldtype": "Button",
+   "hidden": 1,
+   "label": "Send"
+  },
+  {
+   "fieldname": "tab_3_tab",
+   "fieldtype": "Tab Break",
+   "label": "Two Rakat Nafil Namaz"
+  },
+  {
+   "fieldname": "two_rakat_nafil_namaz_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "nafeel_namaz",
+   "fieldtype": "Check",
+   "label": "Nafeel Namaz"
+  },
+  {
+   "fieldname": "date_of_nafil_namaz",
+   "fieldtype": "Date",
+   "label": "Date Of Nafil Namaz",
+   "read_only": 1
+  },
+  {
+   "fieldname": "v19",
+   "fieldtype": "Attach",
+   "hidden": 1,
+   "label": "Video"
+  },
+  {
+   "fieldname": "s19",
+   "fieldtype": "Button",
+   "hidden": 1,
+   "label": "Send"
+  },
+  {
+   "fieldname": "tab_6_tab",
+   "fieldtype": "Tab Break",
+   "label": "Namaz E Janaza"
+  },
+  {
+   "default": "0",
+   "fieldname": "namaz_e_janaza",
+   "fieldtype": "Check",
+   "label": "Namaz E Janaza "
+  },
+  {
+   "fieldname": "date_of_namaz_e_janaza",
+   "fieldtype": "Date",
+   "label": "Date Of Namaz E Janaza",
+   "read_only": 1
+  },
+  {
+   "fieldname": "video",
+   "fieldtype": "Attach",
+   "label": "Video"
+  },
+  {
+   "fieldname": "send",
+   "fieldtype": "Button",
+   "hidden": 1,
+   "label": "Send"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "on_submit_send",
+   "fieldtype": "Data",
+   "label": "On Submit Send",
+   "read_only": 1
+  },
+  {
+   "fieldname": "attach_certificate",
+   "fieldtype": "Attach",
+   "label": "Attach Certificate"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-08-29 15:31:25.936950",
+ "modified_by": "Administrator",
+ "module": "Shaheen Dev",
+ "name": "Weekly Student Progress1",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "select": 1,
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

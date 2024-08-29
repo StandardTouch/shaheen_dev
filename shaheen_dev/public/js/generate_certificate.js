@@ -1,10 +1,8 @@
-frappe.ui.form.on('Student Complete Progress', {
+frappe.ui.form.on('Weekly Student Progress1', {
     refresh: function(frm) {
-        // Add a custom button to the form view
-        console.log('hiiiiiiiiiiiiiiiii')
         frm.add_custom_button(('Generate Certificate'), function() {
             frappe.call({
-                method: "shaheen_dev.api.generate_certificate.generate_certificate",
+                method: "shaheen_dev.api.generate_certificate.send_certificate",
                 args: {
                     docname: frm.doc.name
                 },
