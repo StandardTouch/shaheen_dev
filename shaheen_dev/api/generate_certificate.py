@@ -100,26 +100,24 @@ def process_certificate_and_send(docname):
             "folder": subfolder.name, 
             'is_private': 0,
         })
-        doc = frappe.get_doc("Student Complete Progress", student_details.student_id)
-        doc.attached_certificate = new_file_doc.file_url
-        doc.reload()
-        doc.save(ignore_permissions= True)
-        frappe.db.commit()
-        frappe.enqueue(send_certificate,
-        queue='short',
-        timeout=6000,
-        docname=docname,
-        student_id=student_details.student_id,
-        contact_number = contact_number,
-        
-    )
-        
-
         try:
             new_file_doc.insert()
-            student_details.attached_certificate = new_file_doc.file_url
-            student_details.save(ignore_permissions= True)
+            
+            # Attach certificate to "Student Complete Progress" doc
+            doc = frappe.get_doc("Student Complete Progress", student_details.student_id)
+            doc.attached_certificate = new_file_doc.file_url
+            doc.save(ignore_permissions=True, ignore_version=True)  # ignore_version added to avoid TimestampMismatchError
             frappe.db.commit()
+            
+            # Enqueue sending the certificate only after successful attachment
+            frappe.enqueue(send_certificate,
+                queue='short',
+                timeout=6000,
+                docname=docname,
+                student_id=student_details.student_id,
+                contact_number=contact_number,
+            )
+            
         except Exception as e:
             frappe.throw(f"Error inserting the file into the File doctype: {str(e)}")
 
@@ -131,7 +129,7 @@ def process_certificate_and_send(docname):
 
 
 @frappe.whitelist()
-def send_certificate(docname,student_id,contact_number):
+def send_certificate(docname, student_id, contact_number):
     settings = frappe.get_doc('Shaheen Whatsapp Settings')
     token = settings.get('token')
     msg1 = settings.get('message')
@@ -139,12 +137,8 @@ def send_certificate(docname,student_id,contact_number):
     
     doc = frappe.get_doc("Student Complete Progress", student_id)
     
-    
-    
     site_url = frappe.utils.get_url()
-    
     site_image_url = f"{site_url}{doc.attached_certificate}"
-
     
     payload = {
         'token': token,
