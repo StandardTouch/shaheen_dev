@@ -108,8 +108,8 @@ def process_certificate_and_send(docname):
             new_file_doc.insert()
             
             # Attach certificate to "Student Complete Progress" doc
-            doc = frappe.get_doc("Student Complete Progress", student_details.student_id)
-            frappe.db.set_value("Student Complete Progress", student_details.student_id, "attached_certificate", new_file_doc.file_url) # ignore_version added to avoid TimestampMismatchError
+            # doc = frappe.get_doc("Student Complete Progress", student_details.student_name)
+            frappe.db.set_value("Student Complete Progress", docname, "attached_certificate", new_file_doc.file_url) # ignore_version added to avoid TimestampMismatchError
             frappe.db.commit()
             
             # Enqueue sending the certificate only after successful attachment
