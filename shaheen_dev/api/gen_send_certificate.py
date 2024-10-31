@@ -117,7 +117,7 @@ def process_certificate_and_send(docname):
                 queue='short',
                 timeout=6000,
                 docname=docname,
-                student_id=student_details.student_id,
+                student_id=docname,
                 contact_number=contact_number,
             )
            
@@ -139,7 +139,7 @@ def send_certificate(docname, student_id, contact_number):
     msg1 = settings.get('message')
     image_url = settings.get('image_url')
     
-    doc = frappe.get_doc("Student Complete Progress", student_id)
+    doc = frappe.get_doc("Student Complete Progress", docname)
     
     site_url = frappe.utils.get_url()
     site_image_url = f"{site_url}{doc.attached_certificate}"
