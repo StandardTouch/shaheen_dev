@@ -18,7 +18,7 @@ def download_student_progress_pdf(student_ids):
             # Retrieve image records for each student
             student_progress = frappe.get_all(
                 'Student Complete Progress', 
-                filters={'name': student_id, 'custom_is_exported': 0, 'is_downloaded': 'No'},
+                filters={'name': student_id, 'is_downloaded': 0, 'certificate_downloaded': 'No'},
                 fields=['name', 'attached_certificate']
             )
 
@@ -45,8 +45,8 @@ def download_student_progress_pdf(student_ids):
         # Batch update all processed files' custom_is_exported and is_downloaded fields
         if updated_files:
             for file_id in updated_files:
-                frappe.db.set_value('Student Complete Progress', file_id, 'custom_is_exported', 1)
-                frappe.db.set_value('Student Complete Progress', file_id, 'is_downloaded', 'Yes')
+                frappe.db.set_value('Student Complete Progress', file_id, 'is_downloaded', 1)
+                frappe.db.set_value('Student Complete Progress', file_id, 'certificate_downloaded', 'Yes')
             frappe.db.commit()
 
         # Get the current date and format it
