@@ -15,10 +15,13 @@ def download_student_progress_pdf(student_ids):
         updated_files = []
 
         for student_id in student_id_list:
-            # Retrieve image records for each student
+            # Retrieve image records for each student where `certificate_downloaded` is "No"
             student_progress = frappe.get_all(
                 'Student Complete Progress', 
-                filters={'name': student_id, 'is_downloaded': 0, 'certificate_downloaded': 'No'},
+                filters={
+                    'name': student_id, 
+                    'certificate_downloaded': 'No'
+                },
                 fields=['name', 'attached_certificate']
             )
 
@@ -42,7 +45,7 @@ def download_student_progress_pdf(student_ids):
                 pdf.image(image_file, 10, 10, 277)
                 updated_files.append(image["file_id"])
 
-        # Batch update all processed files' custom_is_exported and is_downloaded fields
+        # Batch update all processed files' `is_downloaded` and `certificate_downloaded` fields
         if updated_files:
             for file_id in updated_files:
                 frappe.db.set_value('Student Complete Progress', file_id, 'is_downloaded', 1)
