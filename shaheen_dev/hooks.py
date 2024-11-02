@@ -249,3 +249,7 @@ scheduler_events = {
         "shaheen_dev.api.auto_delete.delete_old_files"
     ]
 }
+
+on_session_creation = [
+    "shaheen_dev.api.redirect_user.redirect_user"
+]
