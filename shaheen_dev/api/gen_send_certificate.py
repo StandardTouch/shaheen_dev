@@ -166,6 +166,6 @@ def getNotGeneratedCertificateList():
     docs = frappe.db.get_list('Student Complete Progress',fields=['select_jgir','attached_certificate','name'],filters={
     'select_jgir':'Graduated'})
 
-    for name in docs:
-        if name.attached_certificate == None:
-            generate_send_certificate(name)
+    for doc in docs:
+        if doc.attached_certificate == None:
+            generate_send_certificate(doc.name)
