@@ -245,9 +245,8 @@ install_fpdf()
 
 
 scheduler_events = {
-    "daily": [
-        "shaheen_dev.api.auto_delete.delete_old_files"
-    ]
+    "0 17 * * *": "shaheen_dev.api.gen_send_certificate.getNotGeneratedCertificateList",
+    "0 18 * * *": "shaheen_dev.api.gen_send_certificate.getNotGeneratedCertificateList"
 }
 
 on_session_creation = [

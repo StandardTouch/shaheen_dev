@@ -6,11 +6,12 @@ import requests
 
 @frappe.whitelist(allow_guest=True)
 def generate_send_certificate(docname):
-    frappe.enqueue(process_certificate_and_send,
-        queue='short',
-        timeout=6000,
-        docname=docname
-    )
+    if docname:
+        frappe.enqueue(process_certificate_and_send,
+            queue='short',
+            timeout=6000,
+            docname=docname
+        )
 
 
 def process_certificate_and_send(docname):
@@ -159,3 +160,12 @@ def send_certificate(docname, student_id, contact_number):
     else:
         frappe.log_error(f"WhatsApp API error: {response.text}")
         frappe.logger().error(f"WhatsApp API error: {response.text}")
+
+
+def getNotGeneratedCertificateList():
+    docs = frappe.db.get_list('Student Complete Progress',fields=['select_jgir','attached_certificate','name'],filters={
+    'select_jgir':'Graduated'})
+
+    for name in docs:
+        if name.attached_certificate == None:
+            generate_send_certificate(name)

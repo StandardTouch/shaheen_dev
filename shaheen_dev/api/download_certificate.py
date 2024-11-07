@@ -20,7 +20,6 @@ def download_student_progress_pdf(student_ids):
                 'Student Complete Progress', 
                 filters={
                     'name': student_id, 
-                    'certificate_downloaded': 'No'
                 },
                 fields=['name', 'attached_certificate']
             )
