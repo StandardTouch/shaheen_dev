@@ -1,0 +1,24 @@
+/* For the header cell of the ID column */
+.dt-cell__content--header-3 {
+    position: sticky !;
+    top: 0;
+    /* This makes the header stick to the top when scrolling vertically */
+    left: 0;
+    /* This makes the ID column stick to the left */
+    z-index: 10;
+    /* Ensure it stays above other elements */
+    background: #fff;
+    /* Add background to prevent overlap */
+    border-bottom: 1px solid #ddd;
+    /* Optional: Add a subtle border for clarity */
+}
+
+/* For the ID column cells */
+.dt-cell--col-3 {
+    position: sticky;
+    left: 0;
+    z-index: 9;
+    /* Should be lower than the header */
+    background: #fff;
+    /* Add background to prevent overlap */
+}

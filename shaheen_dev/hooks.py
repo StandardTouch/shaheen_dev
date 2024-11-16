@@ -10,7 +10,10 @@ app_license = "mit"
 # ------------------
 
 # include js, css files in header of desk.html
-app_include_css = "/assets/built_in_video_recorder/css/video_recorder.css"
+app_include_css = [
+    "/assets/shaheen_dev/css/video_recorder.css",  # Existing CSS
+    "/assets/shaheen_dev/css/sticky_report.css"   # Add this line for your sticky column CSS
+]
 app_include_js = "/assets/built_in_video_recorder/js/video_recorder.js"
 
 # include js, css files in header of web template
@@ -28,7 +31,11 @@ app_include_js = "/assets/built_in_video_recorder/js/video_recorder.js"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-doctype_js = {"Student Complete Progress" : "public/js/generate_certificate.js" ,}
+doctype_js = {
+    "Student Complete Progress": "public/js/generate_certificate.js",
+    # "Student Learning Status": "public/js/student_learning_status.js"  
+}
+
 doctype_list_js = {"File" :"public/js/download_certificate.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -129,6 +136,12 @@ doctype_list_js = {"File" :"public/js/download_certificate.js"}
 #		"on_trash": "method"
 #	}
 # }
+# doc_events = {
+#     "Student Learning Status": {
+#         "on_update": "shaheen_dev.api.custom_api.create_weekly_progress"
+#     }
+# }
+
 
 # Scheduled Tasks
 # ---------------
@@ -162,6 +175,10 @@ doctype_list_js = {"File" :"public/js/download_certificate.js"}
 # override_whitelisted_methods = {
 #	"frappe.desk.doctype.event.event.get_events": "shaheen_dev.event.get_events"
 # }
+override_whitelisted_methods = {
+    "create_weekly_progress": "shaheen_dev.api.custom_api.create_weekly_progress"
+}
+
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
