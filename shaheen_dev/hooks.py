@@ -122,13 +122,11 @@ doctype_list_js = {"File" :"public/js/download_certificate.js"}
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-#	"*": {
-#		"on_update": "method",
-#		"on_cancel": "method",
-#		"on_trash": "method"
-#	}
-# }
+doc_events = {
+    "Weekly Student Progress": {
+        "after_insert": "shaheen_dev.api.custom_api.update_complete_progress"
+    }
+}
 
 # Scheduled Tasks
 # ---------------
@@ -160,7 +158,7 @@ doctype_list_js = {"File" :"public/js/download_certificate.js"}
 # ------------------------------
 #
 # override_whitelisted_methods = {
-#	"frappe.desk.doctype.event.event.get_events": "shaheen_dev.event.get_events"
+#     "create_weekly_progress": "shaheen_dev.api.custom_api.create_weekly_progress"
 # }
 #
 # each overriding function accepts a `data` argument;
