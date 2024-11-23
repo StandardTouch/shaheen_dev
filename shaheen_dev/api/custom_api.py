@@ -433,6 +433,8 @@ def save_weekly_progress(student_id, field_data):
 
         # Submit the document
         doc.submit()
+        frappe.db.commit()
+
 
         return {
             "status": "success",
@@ -460,11 +462,10 @@ def update_complete_progress(doc, method):
         if not student_progress_name:
             student_progress = frappe.get_doc({
                 "doctype": "Student Complete Progress",
-                "student_name": doc.student_id,  # Set the linked student field
-                # "name": doc.student_id,  # Use the student ID or name for the document name
+                "student_name": doc.student_id,
             })
             student_progress.insert(ignore_permissions=True)
-            student_progress_name = student_progress.name  # Fetch the generated name for further use
+            student_progress_name = student_progress.name
 
         # Fetch the existing Student Complete Progress document
         student_progress = frappe.get_doc("Student Complete Progress", student_progress_name)
@@ -539,7 +540,6 @@ def update_complete_progress(doc, method):
             "duwa_balig_mard_ya_aurath": "date_of_duwa_balig_mard_ya_aurath",
             "duwa_nabalig_bacha": "date_of_nabalig_bacha",
             "duwa_nabalig_bachi": "date_of_nabalig_bachi",
-            # Add other mappings as needed
         }
 
         # Loop through the field mappings and update the target document
@@ -547,15 +547,15 @@ def update_complete_progress(doc, method):
             if student_progress.meta.has_field(complete_field):
                 # Set the checkbox field
                 weekly_value = doc.get(weekly_field)
-                if weekly_value:
+                if weekly_value and not student_progress.get(complete_field):
                     student_progress.set(complete_field, 1)  # Check the field
 
-                # Handle date fields
-                date_field = date_field_mapping.get(complete_field)  # Fetch from date mapping
-                if date_field and student_progress.meta.has_field(date_field):
-                    # Populate date only if the weekly field is checked
-                    if weekly_value:
-                        student_progress.set(date_field, nowdate())
+                    # Handle date fields
+                    date_field = date_field_mapping.get(complete_field)  # Fetch from date mapping
+                    if date_field and student_progress.meta.has_field(date_field):
+                        # Populate date only if it was previously not set
+                        if not student_progress.get(date_field):
+                            student_progress.set(date_field, nowdate())
 
         # Save the updated Student Complete Progress document
         student_progress.save(ignore_permissions=True)
