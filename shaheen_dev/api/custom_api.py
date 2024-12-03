@@ -579,6 +579,151 @@
 
 
 
+# import frappe
+# from frappe.utils import nowdate
+
+# # Define the groups and their fields
+# field_groups = {
+#     "Group 1": ["ghusol_farayez", "ghusol_sunath", "ghusol_nawaqis"],
+#     "Group 2": ["wazu_farayez", "wazu_sunath", "wazu_nawaqis"],
+#     "Group 3": ["sharayath_e_tayammum", "faraez_e_tayammum", "nawaqis_e_tayammum"],
+#     "Group 4": ["fajar", "zohar", "asar", "magrib", "isha", "juma"],
+#     "Group 5": [
+#         "fraez_e_namaz", "wajibath_e_namaz", "sana", "sureh_fatihah", "surah_e_feel",
+#         "surah_e_iqlas", "surah_e_falaq", "surah_e_nas", "tasbihath_rukh_and_sajda",
+#         "attahiyath", "darood_e_ibrahim", "duwa_e_masora", "from_sana_to_salam"
+#     ],
+#     "Group 6": ["sana_to_salam"],
+#     "Group 7": ["duwa_balig_mard_ya_aurath", "duwa_nabalig_bacha", "duwa_nabalig_bachi"],
+# }
+
+# # Define the mapping of fields to their respective date fields
+# field_to_date_mapping = {
+#     "ghusol_farayez": "date_of_farayez_ghusol",
+#     "ghusol_sunath": "date_of_sunath_ghusol",
+#     "ghusol_nawaqis": "date_of_nawaqis_ghusol",
+#     "wazu_farayez": "date_of_farayez_wazu",
+#     "wazu_sunath": "date_of_sunath_wazu",
+#     "wazu_nawaqis": "date_of_nawaqis_wazu",
+#     "sharayath_e_tayammum": "date_of_sharayath_e_tayammum",
+#     "faraez_e_tayammum": "date_of_faraez_e_tayammum",
+#     "nawaqis_e_tayammum": "date_of_nawaqis_e_tayammum",
+#     "fajar": "date_of_fajar_namaz",
+#     "zohar": "date_of_zohar_namaz",
+#     "asar": "date_of_asar_namaz",
+#     "magrib": "date_of_magrib_namaz",
+#     "isha": "date_of_isha_namaz",
+#     "juma": "date_of_juma_namaz",
+#     "fraez_e_namaz": "date_of_fraez",
+#     "wajibath_e_namaz": "date_of_wajibath",
+#     "sana": "date_of_sana",
+#     "sureh_fatihah": "date_of_sureh_fatihah",
+#     "surah_e_feel": "date_of_surah_e_feel",
+#     "surah_e_iqlas": "date_of_surah_e_iqlas",
+#     "surah_e_falaq": "date_of_surah_e_falaq",
+#     "surah_e_nas": "date_of_surah_e_nas",
+#     "tasbihath_rukh_and_sajda": "date_of_tasbihath_rukh_and_sajda",
+#     "attahiyath": "date_of_attahiyath",
+#     "darood_e_ibrahim": "date_of_darood_e_ibrahim",
+#     "duwa_e_masora": "date_of_duwa_e_masora",
+#     "from_sana_to_salam": "date_of_sana_to_salam",
+#     "sana_to_salam": "date_of_sana_to_salam_",
+#     "duwa_balig_mard_ya_aurath": "date_of_duwa_balig_mard_ya_aurath",
+#     "duwa_nabalig_bacha": "date_of_nabalig_bacha",
+#     "duwa_nabalig_bachi": "date_of_nabalig_bachi",
+# }
+
+# # Define the mapping of group names to display names
+# group_name_mapping = {
+#     "Group 1": "Ghusol (Bath)",
+#     "Group 2": "Wazu (Ablution)",
+#     "Group 3": "Tayammum",
+#     "Group 4": "Namaz",
+#     "Group 5": "Extended Namaz",
+#     "Group 6": "Practically Offer Two Rakath Namaz",
+#     "Group 7": "Namaz E Janaza"
+# }
+
+# @frappe.whitelist()
+# def fetch_progress(student_id, group_name):
+#     """
+#     Fetch progress data for a specific group for the given student.
+#     """
+#     if group_name not in field_groups:
+#         frappe.throw(f"Invalid group name: {group_name}")
+
+#     group_fields = field_groups[group_name]
+
+#     # Fetch or create the Student Complete Progress document
+#     student_progress = frappe.get_doc(
+#         "Student Complete Progress",
+#         {"student_name": student_id}
+#     ) if frappe.db.exists("Student Complete Progress", {"student_name": student_id}) else None
+
+#     if not student_progress:
+#         student_progress = frappe.get_doc({
+#             "doctype": "Student Complete Progress",
+#             "student_name": student_id,
+#         })
+#         student_progress.insert()
+#         frappe.db.commit()
+
+#     # Check progress
+#     unchecked_fields = []
+#     previously_checked_fields = {}
+#     for field in group_fields:
+#         checkbox_value = student_progress.get(field)
+#         if checkbox_value:
+#             previously_checked_fields[field] = 1
+#         else:
+#             unchecked_fields.append(field)
+
+#     # If all fields are checked, mark the group as completed
+#     is_group_complete = len(unchecked_fields) == 0
+
+#     # Get the display name for the group
+#     display_name = group_name_mapping.get(group_name, group_name)
+
+#     return {
+#         "status": "success",
+#         "unchecked_fields": unchecked_fields,
+#         "previously_checked_fields": previously_checked_fields,
+#         "is_group_complete": is_group_complete,
+#         "display_name": display_name,
+#     }
+
+
+# @frappe.whitelist()
+# def update_progress(student_id, selected_fields):
+#     """
+#     Update the Student Complete Progress doctype based on selected fields.
+#     """
+#     selected_fields = frappe.parse_json(selected_fields)
+
+#     # Fetch the Student Complete Progress document
+#     student_progress = frappe.get_doc("Student Complete Progress", {"student_name": student_id})
+
+#     # Update the fields in Student Complete Progress
+#     for field, is_checked in selected_fields.items():
+#         if is_checked:
+#             # Mark the field as checked
+#             student_progress.set(field, 1)
+
+#             # Get the corresponding date field from the mapping
+#             date_field = field_to_date_mapping.get(field)
+#             if date_field:
+#                 student_progress.set(date_field, nowdate())
+
+#     # Save the document
+#     student_progress.save()
+#     frappe.db.commit()
+
+#     return {"status": "success", "message": "Progress updated successfully."}
+
+
+# /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 import frappe
 from frappe.utils import nowdate
 
@@ -597,7 +742,18 @@ field_groups = {
     "Group 7": ["duwa_balig_mard_ya_aurath", "duwa_nabalig_bacha", "duwa_nabalig_bachi"],
 }
 
-# Define the mapping of fields to their respective date fields
+# Define the mapping of group names to display names
+group_name_mapping = {
+    "Group 1": "Ghusol (Bath)",
+    "Group 2": "Wazu (Ablution)",
+    "Group 3": "Tayammum",
+    "Group 4": "Namaz",
+    "Group 5": "Extended Namaz",
+    "Group 6": "Practically Offer Two Rakath Namaz",
+    "Group 7": "Namaz E Janaza"
+}
+
+# Mapping for each field to a corresponding date field
 field_to_date_mapping = {
     "ghusol_farayez": "date_of_farayez_ghusol",
     "ghusol_sunath": "date_of_sunath_ghusol",
@@ -631,17 +787,6 @@ field_to_date_mapping = {
     "duwa_balig_mard_ya_aurath": "date_of_duwa_balig_mard_ya_aurath",
     "duwa_nabalig_bacha": "date_of_nabalig_bacha",
     "duwa_nabalig_bachi": "date_of_nabalig_bachi",
-}
-
-# Define the mapping of group names to display names
-group_name_mapping = {
-    "Group 1": "Ghusol (Bath)",
-    "Group 2": "Wazu (Ablution)",
-    "Group 3": "Tayammum",
-    "Group 4": "Namaz",
-    "Group 5": "Extended Namaz",
-    "Group 6": "Practically Offer Two Rakath Namaz",
-    "Group 7": "Namaz E Janaza"
 }
 
 @frappe.whitelist()
@@ -681,7 +826,7 @@ def fetch_progress(student_id, group_name):
     # If all fields are checked, mark the group as completed
     is_group_complete = len(unchecked_fields) == 0
 
-    # Get the display name for the group
+    # Get the display name for the group using the mapping
     display_name = group_name_mapping.get(group_name, group_name)
 
     return {
@@ -691,7 +836,6 @@ def fetch_progress(student_id, group_name):
         "is_group_complete": is_group_complete,
         "display_name": display_name,
     }
-
 
 @frappe.whitelist()
 def update_progress(student_id, selected_fields):
