@@ -111,3 +111,63 @@ video {
 .btn.btn-file-upload:nth-of-type(5) {
     display: none;
 }
+
+.report-footer {
+    display: none;
+}
+
+.layout-side-section {
+    display: none !important;
+}
+
+.comment-input-wrapper {
+    display: none;
+}
+
+.activity-title {
+    display: none !important;
+}
+
+.timeline-item {
+    display: none;
+}
+
+/* custom_navbar.css */
+.custom-navbar {
+    background-color: #0000001f;
+    /* Bootstrap primary color */
+    padding: 8px !important;
+    /* Some padding for better spacing */
+    /* border-radius: 10px 10px 0 0; */
+    /* Rounded top corners */
+    margin: 0;
+}
+
+.custom-navbar button {
+    width: 30px;
+    height: 30px;
+    font-size: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #30d42ac4;
+    color: white;
+    border: none;
+    box-shadow: 0 2px 4px rgb(32, 190, 0);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.custom-navbar button:hover {
+    transform: scale(1.1);
+    /* Slightly enlarge the button on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    /* Add shadow effect on hover */
+}
+
+/* Optional: Hide navbar on larger screens (optional for mobile-first) */
+@media (min-width: 768px) {
+    .custom-navbar {
+        display: none;
+        /* Hide navbar for tablets and larger screens */
+    }
+}
