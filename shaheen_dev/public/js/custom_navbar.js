@@ -54,7 +54,13 @@ $(document).ready(function () {
         `;
 
     // Add the 'Home' button unless the user has the 'Molvi' role
-    if (userRoles.includes('Admin @ Shaheen')) {
+    if (!userRoles.includes('Admin @ Shaheen')) {
+        customNavbar += `
+                <a href="/app/student-registration/new-student-registration-xxsixahect" class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
+                    <i class="bi bi-house-door" style="font-size: 15px;"></i>
+                </a>
+        `;
+    } else {
         customNavbar += `
                 <a href="/app/namaz-e-registration" class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
                     <i class="bi bi-house-door" style="font-size: 15px;"></i>
