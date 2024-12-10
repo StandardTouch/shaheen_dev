@@ -60,7 +60,7 @@ def update_student_progress(student_id, checked_fields):
             'student_name': student_id
         })
         student_progress.insert()
-        frappe.msgprint(("A new Student Complete Progress record has been created for this student."))
+        # frappe.msgprint(("A new Student Complete Progress record has been created for this student."))
 
     # Update the checked fields
     updated_fields = []
@@ -99,7 +99,8 @@ def fetch_student_progress(student_id):
         student_progress = frappe.get_doc('Student Complete Progress', student_progress[0].name)
         return student_progress.as_dict()
     else:
-        return {}
+        pass
+        # return {}
 
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
