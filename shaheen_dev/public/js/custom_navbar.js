@@ -57,7 +57,7 @@ $(document).ready(function () {
     if (!userRoles.includes('Admin @ Shaheen')) {
         customNavbar += `
                 <a href="/app/student-registration/new-student-registration-xxsixahect" class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
-                    <i class="bi bi-house-door" style="font-size: 15px;"></i>
+                    <i class="bi bi-person-add" style="font-size: 15px;"></i>
                 </a>
         `;
     } else {
