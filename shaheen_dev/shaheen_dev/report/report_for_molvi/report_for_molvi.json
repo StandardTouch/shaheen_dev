@@ -1,7 +1,7 @@
 {
  "add_total_row": 0,
  "columns": [],
- "creation": "2024-11-27 15:46:10.801074",
+ "creation": "2024-12-11 10:03:21.516525",
  "disabled": 0,
  "docstatus": 0,
  "doctype": "Report",
@@ -46,20 +46,29 @@
    "label": "Waiting",
    "mandatory": 0,
    "wildcard_filter": 0
+  },
+  {
+   "default": "",
+   "fieldname": "masjid",
+   "fieldtype": "Select",
+   "label": "Masjid",
+   "mandatory": 0,
+   "options": "Masjid",
+   "wildcard_filter": 0
   }
  ],
  "idx": 0,
  "is_standard": "Yes",
  "letterhead": null,
- "modified": "2024-12-11 10:30:04.242178",
+ "modified": "2024-12-11 10:03:31.715953",
  "modified_by": "Administrator",
  "module": "Shaheen Dev",
- "name": "Student Data with check field",
+ "name": "Report for molvi",
  "owner": "Administrator",
  "prepared_report": 0,
  "query": "SELECT \n    status,\n    registration_date,\n    student_name\nFROM \n    `tabStudent Registration`\nWHERE \n    (\n        -- Handle Date Preset for filtering registration date\n        CASE\n            WHEN %(date_preset)s = 'Past Week' THEN registration_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)\n            WHEN %(date_preset)s = 'Past Two Weeks' THEN registration_date >= DATE_SUB(CURDATE(), INTERVAL 14 DAY)\n            ELSE 1 = 1 -- No filtering if no preset selected\n        END\n    )\n    AND (\n        -- Ensure only one checkbox filter is applied at a time\n        (%(graduated)s = 1 AND status = 'Graduated') OR\n        (%(in_batch)s = 1 AND status = 'In Batch') OR\n        (%(waiting)s = 1 AND status = 'Waiting')\n    )\n",
  "ref_doctype": "Student Registration",
- "report_name": "Student Data with check field",
+ "report_name": "Report for molvi",
  "report_script": "",
  "report_type": "Script Report",
  "roles": [
@@ -67,13 +76,7 @@
    "role": "System Manager"
   },
   {
-   "role": "Managment Namaz E Registartion"
-  },
-  {
-   "role": "Admin @ Shaheen"
-  },
-  {
-   "role": "Volunteer"
+   "role": "Molvi"
   }
  ],
  "timeout": 0

@@ -1,4 +1,4 @@
-frappe.query_reports["Your Report Name"] = {
+frappe.query_reports["Student Data with check field"] = {
     filters: [
         {
             fieldname: "date",
