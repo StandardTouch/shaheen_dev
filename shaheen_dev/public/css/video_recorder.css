@@ -171,3 +171,19 @@ video {
         /* Hide navbar for tablets and larger screens */
     }
 }
+
+.ellipsis {
+    overflow: visible !important;
+}
+
+.frappe-list {
+    padding-bottom: 60px !important;
+}
+
+.form-page {
+    padding-bottom: 60px !important;
+}
+
+.indicator-pill {
+    display: none !important;
+}

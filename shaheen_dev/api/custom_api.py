@@ -84,11 +84,10 @@ def update_student_progress(student_id, checked_fields):
             'updated_fields': updated_fields
         }
     else:
-        pass
-        # return {
-        #     'message': 'No fields were updated.',
-        #     'updated_fields': []
-        # }
+        return {
+            'message': 'No fields were updated.',
+            'updated_fields': []
+        }
 
 
 @frappe.whitelist()
@@ -101,8 +100,7 @@ def fetch_student_progress(student_id):
         student_progress = frappe.get_doc('Student Complete Progress', student_progress[0].name)
         return student_progress.as_dict()
     else:
-        pass
-        # return {}
+        return {}
 
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
