@@ -172,10 +172,9 @@ video {
     }
 }
 
-.ellipsis {
+h3.ellipsis.title-text {
     overflow: visible !important;
 }
-
 
 .form-page {
     padding-bottom: 60px !important;
@@ -185,6 +184,6 @@ video {
     padding-bottom: 60px !important;
 }
 
-.indicator-pill {
+/* .indicator-pill {
     display: none !important;
-}
+} */
