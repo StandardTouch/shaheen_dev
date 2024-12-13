@@ -7,13 +7,15 @@ frappe.query_reports["Student registration Details"] = {
 			"fieldname": "start_date",
 			"label": "Start Date",
 			"fieldtype": "Date",
-			"mandatory": 1
+			"mandatory": 1,
+			"default": "Today"
 		},
 		{
 			"fieldname": "end_date",
 			"label": "End Date",
 			"fieldtype": "Date",
-			"mandatory": 1
+			"mandatory": 1,
+			"default": "Today"
 		},
 		{
 			"fieldname": "masjid",
@@ -27,7 +29,8 @@ frappe.query_reports["Student registration Details"] = {
 			"label": "Status",
 			"fieldtype": "Select",
 			"options": "All\nWaiting\nGraduated\nIn Batch",
-			"mandatory": 0
+			"mandatory": 0,
+			"default": "All"
 		}
 	]
 
