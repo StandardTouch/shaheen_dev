@@ -187,3 +187,7 @@ h3.ellipsis.title-text {
 /* .indicator-pill {
     display: none !important;
 } */
+
+#page-query-report {
+    padding-bottom: 60px;
+}
