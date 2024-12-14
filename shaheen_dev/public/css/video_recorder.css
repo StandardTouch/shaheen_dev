@@ -196,15 +196,15 @@ h3.ellipsis.title-text {
 }
 
 /* Hide the navbar on screens larger than 768px (tablet and desktop) */
-@media (min-width: 768px) {
+/* @media (min-width: 768px) {
     .custom-navbar {
         display: none !important;
     }
-}
+} */
 
 /* Show the navbar on screens smaller than 768px (mobile devices) */
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
     .custom-navbar {
         display: flex !important;
     }
-}
+} */
