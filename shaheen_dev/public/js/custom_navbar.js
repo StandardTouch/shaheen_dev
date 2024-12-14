@@ -479,7 +479,7 @@ $(document).ready(function () {
                     if (status === "success") {
                         sidebarContent.html(`
                             <p style="font-size: 18px; font-weight: bold; color: #333333; text-align: center;">
-                                Assalamu Alaikum, <span style="color: #333333;">${user_details.full_name}</span>
+                                <span style="color: #333333;">${user_details.full_name}</span>
                             </p>
                             <hr style="border: 1px solid #cccccc; margin: 20px 0;">
                             <div style="color: #333333; font-size: 14px; text-align: left;">
