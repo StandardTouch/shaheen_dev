@@ -107,3 +107,66 @@ def fetch_student_progress(student_id):
 
 
 
+# import frappe
+
+# @frappe.whitelist()
+# def get_assigned_masjid():
+#     """
+#     Fetch the assigned Masjid and user details for the logged-in user.
+#     """
+#     user = frappe.session.user  # Get the logged-in user
+#     roles = frappe.get_roles(user)  # Get the user's roles
+
+#     # Fetch the user details
+#     user_details = frappe.db.get_value("User", user, ["full_name", "email", "phone"], as_dict=True)
+
+#     if "Molvi" in roles:  # Check if the user is a Molvi
+#         # Fetch the assigned Masjid from User Permissions
+#         masjid = frappe.db.get_value("User Permission", {"user": user, "allow": "Masjid"}, "for_value")
+#         return {
+#             "status": "success",
+#             "masjid": masjid or "No Masjid Assigned",
+#             "user_details": user_details
+#         }
+    
+#     return {
+#         "status": "error",
+#         "message": "You do not have the Molvi role",
+#         "user_details": user_details
+#     }
+
+
+import frappe
+
+@frappe.whitelist()
+def get_assigned_masjid():
+    """
+    Fetch the assigned Masjid, Cluster No, and user details for the logged-in user.
+    """
+    user = frappe.session.user  # Get the logged-in user
+    roles = frappe.get_roles(user)  # Get the user's roles
+
+    # Fetch the user details
+    user_details = frappe.db.get_value("User", user, ["full_name", "email", "phone"], as_dict=True)
+
+    if "Molvi" in roles:  # Check if the user is a Molvi
+        # Fetch the assigned Masjid from User Permissions
+        masjid = frappe.db.get_value("User Permission", {"user": user, "allow": "Masjid"}, "for_value")
+        
+        # Fetch Cluster No for the assigned masjid
+        cluster_no = None
+        if masjid:
+            cluster_no = frappe.db.get_value("Masjid", masjid, "cluster_no")
+        
+        return {
+            "status": "success",
+            "masjid": masjid or "No Masjid Assigned",
+            "cluster_no": cluster_no or "No Cluster No Assigned",
+            "user_details": user_details
+        }
+    
+    return {
+        "status": "error",
+        "message": "You do not have the Molvi role",
+        "user_details": user_details
+    }

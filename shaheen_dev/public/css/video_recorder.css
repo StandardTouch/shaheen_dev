@@ -191,3 +191,13 @@ h3.ellipsis.title-text {
 #page-query-report {
     padding-bottom: 60px;
 }
+
+.indicator-pill.no-indicator-dot.whitespace-nowrap.orange {
+    display: none;
+}
+
+.custom-sidebar {
+    z-index: 1050;
+    background-color: #fff;
+    border-left: 1px solid #dee2e6;
+}
