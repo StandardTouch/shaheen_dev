@@ -74,9 +74,8 @@
 
 
 
-
 import frappe
-from frappe.utils import getdate
+from frappe.utils import getdate  # Import getdate to handle date conversions
 
 def execute(filters=None):
     # Define the columns for the report
@@ -95,7 +94,8 @@ def execute(filters=None):
     ]
 
     # If filters are not set or incomplete, return columns and empty data
-    if not filters or not filters.get("masjid") or not filters.get("start_date") or not filters.get("end_date"):
+    # Remove the check for 'masjid' to allow it to be optional
+    if not filters or not filters.get("start_date") or not filters.get("end_date"):
         return columns, []
 
     # Fetch filtered data
@@ -111,19 +111,24 @@ def get_filtered_data(filters):
 
     # Build conditions based on filters
     conditions = []
-    if filters.get("masjid"):
-        conditions.append(f"masjid_name = '{filters.get('masjid')}'")
+
+    # Always apply the date range filter
     if filters.get("start_date") and filters.get("end_date"):
         start_date = getdate(filters.get("start_date"))
         end_date = getdate(filters.get("end_date"))
         # Include students with NULL registration_date
-        conditions.append(f"(registration_date BETWEEN '{start_date}' AND '{end_date}' OR registration_date IS NULL)")
+        conditions.append(f"(registration_date BETWEEN '{start_date}' AND '{end_date}')")
 
-    # Check for the "All" option in status
+    # Apply masjid filter only if it is selected
+    if filters.get("masjid"):
+        conditions.append(f"masjid_name = '{filters.get('masjid')}'")
+
+    # Check for the "status" filter
     if filters.get("status") and filters.get("status") != "All":
         conditions.append(f"status = '{filters.get('status')}'")
 
-    condition_string = " AND ".join(conditions) if conditions else "1=1"
+    # Combine all conditions; default to "1=1" if no conditions
+    condition_string = " AND ".join(conditions)
 
     # SQL query to fetch data, ordering by registration_date
     query = f"""
@@ -151,4 +156,5 @@ def get_filtered_data(filters):
     # Debug log for the generated query (useful for troubleshooting)
     frappe.logger().debug(f"Generated query: {query}")
 
+    # Execute the SQL query and return results
     return frappe.db.sql(query, as_dict=True)
