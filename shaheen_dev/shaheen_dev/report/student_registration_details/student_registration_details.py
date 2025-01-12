@@ -169,14 +169,14 @@ def execute(filters=None):
         {"fieldname": "student_name", "label": "Student Name", "fieldtype": "Data", "width": 200},
         {"fieldname": "fathers_name", "label": "Fathers Name", "fieldtype": "Data", "width": 200},
         {"fieldname": "contact_number", "label": "Contact Number", "fieldtype": "Data", "width": 150},
-        {"fieldname": "registrar_name", "label": "Registrar Name", "fieldtype": "Data", "width": 150},
+        {"fieldname": "registrar_name", "label": "Registrar Name", "fieldtype": "Data", "width": 100},
         {"fieldname": "address", "label": "Address", "fieldtype": "Data", "width": 150},
         {"fieldname": "area", "label": "Area", "fieldtype": "Data", "width": 150},
         {"fieldname": "pincode", "label": "Pincode", "fieldtype": "Data", "width": 100},
         {"fieldname": "masjid_name", "label": "Masjid Name", "fieldtype": "Data", "width": 200},
-        {"fieldname": "cluster_no", "label": "Cluster No", "fieldtype": "Data", "width": 100},
-        {"fieldname": "status", "label": "Status", "fieldtype": "Data", "width": 120},
-        {"fieldname": "registration_date", "label": "Registration Date", "fieldtype": "Date", "width": 120},
+        {"fieldname": "cluster_no", "label": "Cluster No", "fieldtype": "Data", "width": 50},
+        {"fieldname": "status", "label": "Status", "fieldtype": "Data", "width": 100},
+        {"fieldname": "registration_date", "label": "Registration Date", "fieldtype": "Date", "width": 100},
     ]
 
     # Add the "Last Topic" column only if the status is "In Batch"

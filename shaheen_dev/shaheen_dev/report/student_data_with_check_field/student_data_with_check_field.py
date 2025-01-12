@@ -190,9 +190,9 @@ def execute(filters=None):
 
     # Define columns dynamically
     columns = [
-        {"label": _("Status"), "fieldname": "select_jgir", "fieldtype": "Data", "width": 150},
-        {"label": date_field_label, "fieldname": date_field_name, "fieldtype": "Date", "width": 150},
-        {"label": _("Student Name"), "fieldname": "student_name2", "fieldtype": "Data", "width": 200},
+        {"label": _("Status"), "fieldname": "select_jgir", "fieldtype": "Data", "width": 200},
+        {"label": date_field_label, "fieldname": date_field_name, "fieldtype": "Date", "width": 200},
+        {"label": _("Student Name"), "fieldname": "student_name2", "fieldtype": "Data", "width": 300},
     ]
 
     # Build query conditions dynamically
