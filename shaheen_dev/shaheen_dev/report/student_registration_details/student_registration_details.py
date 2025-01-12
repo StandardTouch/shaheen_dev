@@ -169,7 +169,7 @@ def execute(filters=None):
         {"fieldname": "student_name", "label": "Student Name", "fieldtype": "Data", "width": 200},
         {"fieldname": "fathers_name", "label": "Fathers Name", "fieldtype": "Data", "width": 200},
         {"fieldname": "contact_number", "label": "Contact Number", "fieldtype": "Data", "width": 150},
-        {"fieldname": "registrar_name", "label": "Registrar Name", "fieldtype": "Data", "width": 100},
+        {"fieldname": "registrar_name", "label": "Registrar Name", "fieldtype": "Data", "width": 50},
         {"fieldname": "address", "label": "Address", "fieldtype": "Data", "width": 150},
         {"fieldname": "area", "label": "Area", "fieldtype": "Data", "width": 150},
         {"fieldname": "pincode", "label": "Pincode", "fieldtype": "Data", "width": 100},
