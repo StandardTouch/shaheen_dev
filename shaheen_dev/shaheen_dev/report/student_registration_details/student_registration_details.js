@@ -1,5 +1,5 @@
-// Copyright (c) 2024, zaid and contributors
-// For license information, please see license.txt
+Copyright(c) 2024, zaid and contributors
+For license information, please see license.txt
 
 frappe.query_reports["Student registration Details"] = {
 	"filters": [
@@ -35,3 +35,7 @@ frappe.query_reports["Student registration Details"] = {
 	]
 
 };
+
+
+
+
