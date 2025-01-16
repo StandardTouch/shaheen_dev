@@ -251,7 +251,25 @@ frappe.query_reports["report with filtered masjids"] = {
 	],
 
 	onload: function (report) {
-		populateMasjidDropdown(); // Populate the Masjid dropdown on report load
+		populateMasjidDropdown(); // Populate the dropdown on load
+
+		setTimeout(() => {
+			let $selectField = $('select[data-fieldname="filtered_masjid"]');
+
+			if ($selectField.length > 0) {
+				console.log("Applying Select2 with minimal placeholder...");
+
+				// Remove existing placeholder and empty options
+				$selectField.find("option[value=''], option:empty").remove();
+
+				// Apply Select2 with minimal placeholder (.)
+				$selectField.select2({
+					placeholder: ".", // Minimal placeholder
+					allowClear: true, // Enable clearable field
+					width: '100%' // Ensure the dropdown fits ERPNext layout
+				});
+			}
+		}, 500); // Delay ensures rendering is complete
 	}
 };
 
@@ -275,3 +293,4 @@ function populateMasjidDropdown() {
 		}
 	});
 }
+
