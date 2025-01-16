@@ -10,11 +10,18 @@ app_license = "mit"
 # ------------------
 
 # include js, css files in header of desk.html
-app_include_css = "/assets/shaheen_dev/css/video_recorder.css"
+app_include_css = [
+    "/assets/shaheen_dev/css/video_recorder.css",
+    "https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css"  # CDN CSS
+]
+
 app_include_js = [
     "/assets/shaheen_dev/js/video_recorder.js",
-    "/assets/shaheen_dev/js/custom_navbar.js"  # New file for custom navbar at the bottom
+    "/assets/shaheen_dev/js/custom_navbar.js",
+    "https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"    # CDN JS
 ]
+
+
 
 
 # include js, css files in header of web template
