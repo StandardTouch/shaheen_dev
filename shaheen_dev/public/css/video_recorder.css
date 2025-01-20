@@ -208,3 +208,13 @@ h3.ellipsis.title-text {
         display: flex !important;
     }
 } */
+
+
+/* /////////////// hide the sl no for the reports ///////////// */
+
+/* Globally hide the default SL No. column in all reports */
+.dt-cell__content--col-0,
+.dt-cell--col-0,
+.dt-cell__header--col-0 {
+    display: none !important;
+}

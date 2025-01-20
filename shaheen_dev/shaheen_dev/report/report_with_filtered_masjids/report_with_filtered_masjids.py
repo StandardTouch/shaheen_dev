@@ -357,6 +357,8 @@
 
 import frappe
 from frappe.utils import getdate
+from shaheen_dev.shaheen_dev.utils.report_utils import add_custom_sl_no  # Import the utility function
+
 
 def execute(filters=None):
     """
@@ -387,6 +389,7 @@ def execute(filters=None):
 
     # Fetch filtered data
     data = get_filtered_data(filters)
+    columns, data = add_custom_sl_no(columns, data)
     return columns, data
 
 
