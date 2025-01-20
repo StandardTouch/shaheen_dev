@@ -1,5 +1,6 @@
 import frappe
 from frappe import _
+from shaheen_dev.shaheen_dev.utils.report_utils import add_custom_sl_no
 
 def execute(filters=None):
     filters = frappe._dict(filters or {})
@@ -70,6 +71,7 @@ def execute(filters=None):
         as_dict=True,
     )
 
+    columns, data = add_custom_sl_no(columns, data)
     return columns, data
 
 
