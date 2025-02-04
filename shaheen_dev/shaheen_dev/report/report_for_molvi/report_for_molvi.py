@@ -12,7 +12,8 @@ def execute(filters=None):
         {"label": _("Masjid Name"), "fieldname": "masjid_name", "fieldtype": "Data", "width": 150},
     ]
 
-    conditions = []
+    conditions = ["registration_date IS NOT NULL AND registration_date != ''"]
+    # conditions = []
 
     # Filter by date
     if filters.get("date_preset") == "None":
