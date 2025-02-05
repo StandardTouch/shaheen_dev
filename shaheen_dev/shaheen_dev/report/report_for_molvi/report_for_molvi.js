@@ -1,25 +1,16 @@
 frappe.query_reports["Report for molvi"] = {
 	filters: [
 		{
-			fieldname: "date",
-			label: __("Registration Date"),
+			fieldname: "from_date",
+			label: __("From Date"),
 			fieldtype: "Date",
-			default: frappe.datetime.nowdate()
+			default: frappe.datetime.add_days(frappe.datetime.nowdate(), -7)
 		},
 		{
-			fieldname: "date_preset",
-			label: __("Date Preset"),
-			fieldtype: "Select",
-			options: ["None", "Past Week", "Past Two Weeks", "Past Month", "All"],
-			default: "None",
-			onchange: function () {
-				let preset = frappe.query_report.get_filter_value("date_preset");
-				if (preset === "None") {
-					frappe.query_report.toggle_filter_display("date", true); // Show the date filter
-				} else {
-					frappe.query_report.toggle_filter_display("date", false); // Hide the date filter
-				}
-			}
+			fieldname: "to_date",
+			label: __("To Date"),
+			fieldtype: "Date",
+			default: frappe.datetime.nowdate()
 		},
 		{
 			fieldname: "graduated",

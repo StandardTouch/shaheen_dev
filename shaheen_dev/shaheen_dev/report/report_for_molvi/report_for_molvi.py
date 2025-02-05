@@ -13,21 +13,10 @@ def execute(filters=None):
     ]
 
     conditions = ["registration_date IS NOT NULL AND registration_date != ''"]
-    # conditions = []
 
-    # Filter by date
-    if filters.get("date_preset") == "None":
-        if filters.get("date"):
-            conditions.append(f"registration_date = '{filters.get('date')}'")
-    elif filters.get("date_preset"):
-        if filters["date_preset"] == "Past Week":
-            conditions.append("registration_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)")
-        elif filters["date_preset"] == "Past Two Weeks":
-            conditions.append("registration_date >= DATE_SUB(CURDATE(), INTERVAL 14 DAY)")
-        elif filters["date_preset"] == "Past Month":
-            conditions.append("registration_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)")
-        elif filters["date_preset"] == "All":
-            pass
+    # Apply date range filter (strictly using From Date and To Date)
+    if filters.get("from_date") and filters.get("to_date"):
+        conditions.append(f"registration_date BETWEEN '{filters.get('from_date')}' AND '{filters.get('to_date')}'")
 
     # Filter for status checkboxes
     status_conditions = []
@@ -43,17 +32,13 @@ def execute(filters=None):
     # Restrict data based on role
     user_roles = frappe.get_roles(frappe.session.user)
     if "Molvi" in user_roles:
-        # Fetch the masjid name for the logged-in Molvi from Molvi Registration
         assigned_masjid = frappe.db.get_value(
             "Molvi Registration", {"email": frappe.session.user}, "masjid"
         )
         if assigned_masjid:
-            # Use masjid_name for filtering in Student Registration
             conditions.append(f"masjid_name = '{assigned_masjid}'")
         else:
-            # If no Masjid assigned, Molvi sees no data
-            conditions.append("1=0")
-    # Admin can view all data, so no restriction for Admin
+            conditions.append("1=0")  # No data for unassigned Molvis
 
     where_clause = " AND ".join(conditions) if conditions else "1=1"
 
@@ -68,13 +53,10 @@ def execute(filters=None):
             `tabStudent Registration`
         WHERE
             {where_clause}
+        ORDER BY registration_date ASC
         """,
         as_dict=True,
     )
 
     columns, data = add_custom_sl_no(columns, data)
     return columns, data
-
-
-# ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
