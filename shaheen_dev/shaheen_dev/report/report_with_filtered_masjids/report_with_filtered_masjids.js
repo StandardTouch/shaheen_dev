@@ -59,9 +59,38 @@ frappe.query_reports["report with filtered masjids"] = {
 	}
 };
 
-// Function to populate the Masjid dropdown dynamically
+// // Function to populate the Masjid dropdown dynamically
+// function populateMasjidDropdown() {
+// 	let filters = frappe.query_report.get_filter_values();
+// 	frappe.call({
+// 		method: "shaheen_dev.shaheen_dev.report.report_with_filtered_masjids.report_with_filtered_masjids.get_filtered_masjids",
+// 		args: {
+// 			status: filters.status,
+// 			start_date: filters.start_date,
+// 			end_date: filters.end_date
+// 		},
+// 		callback: function (r) {
+// 			if (r.message) {
+// 				let masjid_filter = frappe.query_report.get_filter("filtered_masjid");
+// 				// Add "All" option as the default
+// 				masjid_filter.df.options = ["All"].concat(r.message.map(m => m.label)).join("\n");
+// 				masjid_filter.refresh();
+// 				masjid_filter.set_input("All"); // Set "All" as the default value
+// 			}
+// 		}
+// 	});
+// }
+
+
+
+// Function to populate the Masjid dropdown dynamically without resetting selection
 function populateMasjidDropdown() {
 	let filters = frappe.query_report.get_filter_values();
+	let masjid_filter = frappe.query_report.get_filter("filtered_masjid");
+
+	// Store the currently selected masjid before updating
+	let current_selected_masjid = masjid_filter.get_value();
+
 	frappe.call({
 		method: "shaheen_dev.shaheen_dev.report.report_with_filtered_masjids.report_with_filtered_masjids.get_filtered_masjids",
 		args: {
@@ -71,11 +100,19 @@ function populateMasjidDropdown() {
 		},
 		callback: function (r) {
 			if (r.message) {
-				let masjid_filter = frappe.query_report.get_filter("filtered_masjid");
-				// Add "All" option as the default
-				masjid_filter.df.options = ["All"].concat(r.message.map(m => m.label)).join("\n");
+				let masjid_options = ["All"].concat(r.message.map(m => m.label));
+
+				// Update options without resetting selection
+				masjid_filter.df.options = masjid_options.join("\n");
 				masjid_filter.refresh();
-				masjid_filter.set_input("All"); // Set "All" as the default value
+
+				// If the previously selected masjid exists in the new list, restore it
+				if (masjid_options.includes(current_selected_masjid)) {
+					masjid_filter.set_input(current_selected_masjid);
+				} else {
+					// Otherwise, keep "All" as the default
+					masjid_filter.set_input("All");
+				}
 			}
 		}
 	});
