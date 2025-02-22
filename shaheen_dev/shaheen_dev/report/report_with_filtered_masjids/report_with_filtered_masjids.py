@@ -137,10 +137,49 @@
 
 # /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 import frappe
-from frappe.utils import getdate
-from shaheen_dev.shaheen_dev.utils.report_utils import add_custom_sl_no  # Import the utility function
+
+@frappe.whitelist()
+def get_filtered_masjids(status=None, start_date=None, end_date=None):
+    """
+    Returns a list of Masjids filtered by the provided status and date range.
+    """
+    frappe.logger().info(f"Fetching Masjids for status: {status}, start_date: {start_date}, end_date: {end_date}")
+
+    conditions = ["sr.masjid_name IS NOT NULL", "sr.masjid_name != ''"]  # ✅ Exclude empty Masjid names
+
+    if status and status != "All":
+        conditions.append(f"sr.status = '{status}'")
+
+    if start_date and end_date:
+        if status == "Graduated":
+            conditions.append(f"scp.graduation_date BETWEEN '{start_date}' AND '{end_date}'")
+        else:
+            conditions.append(f"sr.registration_date BETWEEN '{start_date}' AND '{end_date}'")
+
+    condition_string = " AND ".join(conditions)
+
+    if status == "Graduated":
+        query = f"""
+            SELECT DISTINCT sr.masjid_name
+            FROM `tabStudent Registration` sr
+            LEFT JOIN `tabStudent Complete Progress` scp
+            ON sr.student_name = scp.student_name2
+            WHERE {condition_string}
+        """
+    else:
+        query = f"""
+            SELECT DISTINCT sr.masjid_name
+            FROM `tabStudent Registration` sr
+            WHERE {condition_string}
+        """
+
+    masjids = frappe.db.sql(query, as_dict=False)
+    frappe.logger().info(f"Masjids Retrieved: {masjids}")
+
+    # ✅ Remove empty Masjids before returning the list
+    return [{"label": m[0], "value": m[0]} for m in masjids if m[0] and m[0].strip() != ""]
+
 
 def execute(filters=None):
     """
@@ -160,36 +199,25 @@ def execute(filters=None):
         {"fieldname": "registration_date", "label": "Registration Date", "fieldtype": "Date", "width": 120},
     ]
 
-    # Add "Graduation Date" column if status = "Graduated"
     if filters and filters.get("status") == "Graduated":
         columns.append({"fieldname": "graduation_date", "label": "Graduation Date", "fieldtype": "Date", "width": 120})
 
-    # Add "Last Topic" column for "In Batch" and "All" statuses
-    if filters and filters.get("status") in ["In Batch", "All"]:
-        columns.append({"fieldname": "last_topic_label", "label": "Last Topic", "fieldtype": "Data", "width": 150})
-
-    if not filters or not filters.get("start_date") or not filters.get("end_date"):
-        return columns, []
-
     data = get_filtered_data(filters)
-    columns, data = add_custom_sl_no(columns, data)
     return columns, data
 
+
 def get_filtered_data(filters):
+    """
+    Fetches filtered data based on the provided filters.
+    """
     conditions = []
-    join_progress = False
+    join_progress = False  
 
     if filters.get("status") == "Graduated":
         join_progress = True
-        if filters.get("start_date") and filters.get("end_date"):
-            start_date = getdate(filters.get("start_date"))
-            end_date = getdate(filters.get("end_date"))
-            conditions.append(f"(scp.graduation_date BETWEEN '{start_date}' AND '{end_date}')")
+        conditions.append(f"(scp.graduation_date BETWEEN '{filters.get('start_date')}' AND '{filters.get('end_date')}')")
     else:
-        if filters.get("start_date") and filters.get("end_date"):
-            start_date = getdate(filters.get("start_date"))
-            end_date = getdate(filters.get("end_date"))
-            conditions.append(f"(sr.registration_date BETWEEN '{start_date}' AND '{end_date}')")
+        conditions.append(f"(sr.registration_date BETWEEN '{filters.get('start_date')}' AND '{filters.get('end_date')}')")
 
     if filters.get("filtered_masjid") and filters.get("filtered_masjid") != "All":
         conditions.append(f"sr.masjid_name = '{filters.get('filtered_masjid')}'")
@@ -201,95 +229,19 @@ def get_filtered_data(filters):
 
     if join_progress:
         query = f"""
-            SELECT
-                sr.student_name,
-                sr.fathers_name,
-                sr.contact_number,
-                sr.registrar_name,
-                sr.address,
-                sr.area,
-                sr.pincode,
-                sr.masjid_name,
-                sr.cluster_no,
-                sr.status,
-                sr.registration_date,
-                scp.graduation_date
-            FROM
-                `tabStudent Registration` sr
-            LEFT JOIN
-                `tabStudent Complete Progress` scp
-            ON
-                sr.student_name = scp.student_name2
-            WHERE
-                {condition_string}
-            ORDER BY
-                scp.graduation_date ASC
+            SELECT sr.*, scp.graduation_date
+            FROM `tabStudent Registration` sr
+            LEFT JOIN `tabStudent Complete Progress` scp
+            ON sr.student_name = scp.student_name2
+            WHERE {condition_string}
+            ORDER BY scp.graduation_date ASC
         """
     else:
         query = f"""
-            SELECT
-                sr.student_name,
-                sr.fathers_name,
-                sr.contact_number,
-                sr.registrar_name,
-                sr.address,
-                sr.area,
-                sr.pincode,
-                sr.masjid_name,
-                sr.cluster_no,
-                sr.status,
-                sr.registration_date
-            FROM
-                `tabStudent Registration` sr
-            WHERE
-                {condition_string}
-            ORDER BY
-                sr.registration_date ASC
+            SELECT *
+            FROM `tabStudent Registration` sr
+            WHERE {condition_string}
+            ORDER BY sr.registration_date ASC
         """
 
-    student_data = frappe.db.sql(query, as_dict=True)
-
-    if filters.get("status") in ["In Batch", "All"]:
-        progress_data = frappe.db.sql("""
-            SELECT
-                student_name2,
-                last_topic_label
-            FROM
-                `tabStudent Complete Progress`
-        """, as_dict=True)
-
-        progress_lookup = {row["student_name2"]: row["last_topic_label"] for row in progress_data}
-
-        for row in student_data:
-            row["last_topic_label"] = progress_lookup.get(row["student_name"], "")
-
-    return student_data
-
-@frappe.whitelist()
-def get_filtered_masjids(status=None, start_date=None, end_date=None):
-    """
-    Returns a list of Masjids filtered by the provided status and date range.
-    """
-    conditions = ["masjid_name IS NOT NULL"]
-
-    if status and status != "All":
-        conditions.append(f"status = '{status}'")
-
-    if start_date and end_date:
-        conditions.append(f"registration_date BETWEEN '{start_date}' AND '{end_date}'")
-
-    condition_string = " AND ".join(conditions)
-
-    query = f"""
-        SELECT DISTINCT
-            masjid_name
-        FROM
-            `tabStudent Registration`
-        WHERE
-            {condition_string}
-    """
-
-    masjids = frappe.db.sql(query, as_dict=False)
-
-    # ✅ Corrected the return statement
-    return [{"label": m[0], "value": m[0]} for m in masjids if m[0]]
+    return frappe.db.sql(query, as_dict=True)
