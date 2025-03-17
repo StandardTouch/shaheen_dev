@@ -138,6 +138,9 @@
 # /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 import frappe
+from frappe.utils import getdate
+from shaheen_dev.shaheen_dev.utils.report_utils import add_custom_sl_no  # Import the utility function
+
 
 @frappe.whitelist()
 def get_filtered_masjids(status=None, start_date=None, end_date=None):
@@ -186,6 +189,7 @@ def execute(filters=None):
     Main function to fetch and display the report data.
     """
     columns = [
+        {"fieldname": "sl_no", "label": "Sl No", "fieldtype": "Int", "width": 80},  # ✅ Ensure SL No column exists
         {"fieldname": "student_name", "label": "Student Name", "fieldtype": "Data", "width": 200},
         {"fieldname": "fathers_name", "label": "Fathers Name", "fieldtype": "Data", "width": 200},
         {"fieldname": "contact_number", "label": "Contact Number", "fieldtype": "Data", "width": 150},
@@ -203,6 +207,7 @@ def execute(filters=None):
         columns.append({"fieldname": "graduation_date", "label": "Graduation Date", "fieldtype": "Date", "width": 120})
 
     data = get_filtered_data(filters)
+    columns, data = add_custom_sl_no(columns, data)
     return columns, data
 
 
