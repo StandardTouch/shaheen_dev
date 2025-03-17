@@ -189,7 +189,7 @@ def execute(filters=None):
     Main function to fetch and display the report data.
     """
     columns = [
-        {"fieldname": "sl_no", "label": "Sl No", "fieldtype": "Int", "width": 80},  # ✅ Ensure SL No column exists
+        {"fieldname": "sl_no", "label": "Sl No", "fieldtype": "Int", "width": 40},  # ✅ Ensure SL No column exists
         {"fieldname": "student_name", "label": "Student Name", "fieldtype": "Data", "width": 200},
         {"fieldname": "fathers_name", "label": "Fathers Name", "fieldtype": "Data", "width": 200},
         {"fieldname": "contact_number", "label": "Contact Number", "fieldtype": "Data", "width": 150},
