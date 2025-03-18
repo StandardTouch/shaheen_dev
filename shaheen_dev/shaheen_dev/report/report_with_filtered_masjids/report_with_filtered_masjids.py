@@ -189,7 +189,7 @@ def execute(filters=None):
     Main function to fetch and display the report data.
     """
     columns = [
-        {"fieldname": "sl_no", "label": "Sl No", "fieldtype": "Int", "width": 40},  # ✅ Ensure SL No column exists
+        {"fieldname": "sl_no", "label": "Sl No", "fieldtype": "Int", "width": 50},  # ✅ Ensure SL No column exists
         {"fieldname": "student_name", "label": "Student Name", "fieldtype": "Data", "width": 200},
         {"fieldname": "fathers_name", "label": "Fathers Name", "fieldtype": "Data", "width": 200},
         {"fieldname": "contact_number", "label": "Contact Number", "fieldtype": "Data", "width": 150},
@@ -211,86 +211,27 @@ def execute(filters=None):
     return columns, data
 
 
-# def get_filtered_data(filters):
-#     """
-#     Fetches filtered data based on the provided filters.
-#     """
-#     conditions = []
-#     join_progress = False  
-
-#     if filters.get("status") == "Graduated":
-#         join_progress = True
-#         conditions.append(f"(scp.graduation_date BETWEEN '{filters.get('start_date')}' AND '{filters.get('end_date')}')")
-#     else:
-#         conditions.append(f"(sr.registration_date BETWEEN '{filters.get('start_date')}' AND '{filters.get('end_date')}')")
-
-#     if filters.get("filtered_masjid") and filters.get("filtered_masjid") != "All":
-#         conditions.append(f"sr.masjid_name = '{filters.get('filtered_masjid')}'")
-
-#     if filters.get("status") and filters.get("status") != "All":
-#         conditions.append(f"sr.status = '{filters.get('status')}'")
-
-#     condition_string = " AND ".join(conditions) if conditions else "1=1"
-
-#     if join_progress:
-#         query = f"""
-#             SELECT sr.*, scp.graduation_date
-#             FROM `tabStudent Registration` sr
-#             LEFT JOIN `tabStudent Complete Progress` scp
-#             ON sr.student_name = scp.student_name2
-#             WHERE {condition_string}
-#             ORDER BY scp.graduation_date ASC
-#         """
-#     else:
-#         query = f"""
-#             SELECT *
-#             FROM `tabStudent Registration` sr
-#             WHERE {condition_string}
-#             ORDER BY sr.registration_date ASC
-#         """
-
-#     return frappe.db.sql(query, as_dict=True)
-
 def get_filtered_data(filters):
     """
     Fetches filtered data based on the provided filters.
     """
     conditions = []
-    join_progress = False  # This tracks whether we need to join with Student Complete Progress.
+    join_progress = False  
 
-    # Date filter logic
-    start_date = filters.get("start_date")
-    end_date = filters.get("end_date")
+    if filters.get("status") == "Graduated":
+        join_progress = True
+        conditions.append(f"(scp.graduation_date BETWEEN '{filters.get('start_date')}' AND '{filters.get('end_date')}')")
+    else:
+        conditions.append(f"(sr.registration_date BETWEEN '{filters.get('start_date')}' AND '{filters.get('end_date')}')")
 
-    date_condition = ""
-    if start_date and end_date:
-        if filters.get("status") == "Graduated":
-            join_progress = True
-            date_condition = f"(scp.graduation_date BETWEEN '{start_date}' AND '{end_date}')"
-        elif filters.get("status") == "All":
-            join_progress = True
-            # If "All" status is selected, check both graduation_date and registration_date
-            date_condition = f"""
-                ((sr.registration_date BETWEEN '{start_date}' AND '{end_date}')
-                OR (scp.graduation_date BETWEEN '{start_date}' AND '{end_date}'))
-            """
-        else:
-            date_condition = f"(sr.registration_date BETWEEN '{start_date}' AND '{end_date}')"
-
-    if date_condition:
-        conditions.append(date_condition)
-
-    # Masjid Filter
     if filters.get("filtered_masjid") and filters.get("filtered_masjid") != "All":
         conditions.append(f"sr.masjid_name = '{filters.get('filtered_masjid')}'")
 
-    # Status Filter
     if filters.get("status") and filters.get("status") != "All":
         conditions.append(f"sr.status = '{filters.get('status')}'")
 
     condition_string = " AND ".join(conditions) if conditions else "1=1"
 
-    # Choose the appropriate query structure based on whether we need to join with scp
     if join_progress:
         query = f"""
             SELECT sr.*, scp.graduation_date
@@ -298,7 +239,7 @@ def get_filtered_data(filters):
             LEFT JOIN `tabStudent Complete Progress` scp
             ON sr.student_name = scp.student_name2
             WHERE {condition_string}
-            ORDER BY COALESCE(scp.graduation_date, sr.registration_date) ASC
+            ORDER BY scp.graduation_date ASC
         """
     else:
         query = f"""
