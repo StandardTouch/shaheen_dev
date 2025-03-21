@@ -44,35 +44,35 @@ frappe.query_reports["report with filtered masjids"] = {
 				frappe.query_report.refresh();
 			}
 		},
-		{
-			"fieldname": "apply_graduate_filter",
-			"label": "Apply Graduate Filter",
-			"fieldtype": "Check",
-			"default": 0,
-			"on_change": function () {
-				// When checkbox is checked, only show "Graduated" status in the filter
-				if (cur_frm.doc.apply_graduate_filter) {
-					// Hide all other statuses and only show "Graduated"
-					cur_frm.fields_dict["status"].get_query = function () {
-						return {
-							"filters": {
-								"status": "Graduated"
-							}
-						};
-					};
-					cur_frm.fields_dict["status"].df.options = ["Graduated"];  // Only "Graduated" available
-				} else {
-					// When checkbox is unchecked, show all statuses
-					cur_frm.fields_dict["status"].get_query = function () {
-						return {};
-					};
-					cur_frm.fields_dict["status"].df.options = ["All", "Graduated", "In Batch", "Waiting"];  // All statuses available
-				}
+		// {
+		// 	"fieldname": "apply_graduate_filter",
+		// 	"label": "Apply Graduate Filter",
+		// 	"fieldtype": "Check",
+		// 	"default": 0,
+		// 	"on_change": function () {
+		// 		// When checkbox is checked, only show "Graduated" status in the filter
+		// 		if (cur_frm.doc.apply_graduate_filter) {
+		// 			// Hide all other statuses and only show "Graduated"
+		// 			cur_frm.fields_dict["status"].get_query = function () {
+		// 				return {
+		// 					"filters": {
+		// 						"status": "Graduated"
+		// 					}
+		// 				};
+		// 			};
+		// 			cur_frm.fields_dict["status"].df.options = ["Graduated"];  // Only "Graduated" available
+		// 		} else {
+		// 			// When checkbox is unchecked, show all statuses
+		// 			cur_frm.fields_dict["status"].get_query = function () {
+		// 				return {};
+		// 			};
+		// 			cur_frm.fields_dict["status"].df.options = ["All", "Graduated", "In Batch", "Waiting"];  // All statuses available
+		// 		}
 
-				// Refresh the filter field to apply changes
-				frappe.query_report.refresh();
-			}
-		}
+		// 		// Refresh the filter field to apply changes
+		// 		frappe.query_report.refresh();
+		// 	}
+		// }
 	],
 	onload: function (report) {
 		populateMasjidDropdown();
